@@ -1,0 +1,86 @@
+#!/bin/bash
+
+file2sent () {
+	file=$1
+	profile="`dirname $file`/.."
+	item="$profile/item"
+	id=$(echo $(basename $file) | cut -d. -f1)
+	sent=`id2entry $id < $item | item2sent`
+	echo $sent
+}
+
+pred2comp() {
+	src=$1
+	tgt=$2
+
+	## sort and compare src and tgt file preds
+	## print preds unique to src and tgt into separate files	
+	rm -f *.tmp && touch src_diff.tmp tgt_diff.tmp
+	sort -u < $src | cut -f2 > src.tmp
+	sort -u < $tgt | cut -f2 > tgt.tmp
+	diff -y src.tmp tgt.tmp |
+	awk '
+	/</ {
+		print $1 > "src_diff.tmp"
+	}
+	/>/ {
+		print $2> "tgt_diff.tmp"
+	}
+	/\|/ {
+		print $1 > "src_diff.tmp"
+		print $3 > "tgt_diff.tmp"
+	}
+	END {
+		close("src_diff.tmp")
+		close("tgt_diff.tmp")
+	}'
+
+	## get src and tgt sentence from corresponding profiles
+	src_sent=`file2sent $src`
+	tgt_sent=`file2sent $tgt`
+
+	## print header with src and tgt files, sentences
+	## followed by diff of preds
+	cat <<- HEADER
+		###################################################################
+		# $src
+		# $tgt
+		# $src_sent	$tgt_sent
+		###################################################################
+	HEADER
+	paste src_diff.tmp tgt_diff.tmp
+	echo ""
+
+	## cleanup
+	rm -f *.tmp
+}
+
+usage () {
+	echo 1>&2 "usage: pred2comp <source_pred> <target_pred>"
+}
+
+if [ $# != 2 ]; then
+	usage
+	exit 1
+fi
+
+src=$1
+tgt=$2
+
+if [ "${src#/}" = "$src" ]; then
+	src="$PWD/$src"
+fi
+
+if [ "${tgt#/}" = "$tgt" ]; then
+	tgt="$PWD/$tgt"
+fi
+
+if [ ! -f "$src" ]; then
+	echo 1>&2 "ERROR: unable to open '$src'"
+	exit 1
+elif [ ! -f "$tgt" ]; then
+	echo 1>&2 "ERROR: unable to open '$tgt'"
+	exit 1
+else
+	pred2comp $src $tgt
+fi

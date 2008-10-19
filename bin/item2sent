@@ -1,0 +1,7 @@
+#!/bin/bash
+
+item2sent () {
+	cut -d@ -f7
+}
+
+item2sent

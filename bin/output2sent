@@ -1,0 +1,7 @@
+#!/bin/bash
+
+output2sent () {
+	cut -d@ -f8
+}
+
+output2sent

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+profile2pst () {
+	sort -t@ -k1n -k2n -u |
+	awk '
+	BEGIN {
+		FS="@"
+	}
+	{
+		pst = ($1 "." $2 ".pst")
+		print | ("result2pst > " pst)
+	}'
+}
+
+profile2pst

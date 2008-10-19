@@ -1,0 +1,14 @@
+#!/bin/bash
+
+bitext2tgt () {
+	awk '
+	BEGIN {
+		FS="\n"
+		RS="\n\n"
+	}
+	{
+		print $2
+	}'
+}
+
+bitext2tgt

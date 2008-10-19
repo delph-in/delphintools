@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. $LTHOME/env/logon.env
+
+file-mrx2mrs () {
+	cat 2>&1 <<- LISP
+		(defun file-mrx2mrs (filename)
+                  (with-open-file (stream *standard-input*)
+                    (read-line stram nil))
+;;		  (let* ((mrx (mrs::read-single-mrs-xml-file filename))
+;;		         (mrs (with-output-to-string (s)
+;;		                (mrs::output-mrs mrx 'mrs::simple s))))
+;;		    (with-open-file (y (format nil "~a.mrs" filename) 
+;;		                        :direction :output :if-exists :supersede)
+;;		      (princ mrs y))))
+	LISP
+}
+
+mrx2mrs () {
+	file-mrx2mrs
+	for f in $* ; do
+		cat 2>&1 <<- LISP
+			(file-mrx2mrs "$f")
+		LISP
+	done
+}
+
+mrx2mrs $* | logon

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mtr2pred () {
+	grep -Ev '^;' |
+	grep -Eho 'PRED [^ ]+' $* |
+	grep -Ev '[\#~]' |
+	grep -Ev '_mark$' |
+	sed 's/PRED //g
+		 s/ja://g
+		 s/[",:]//g
+		 s/]//g' |
+	sort |
+	uniq -c | 
+	sort -nr
+}
+
+mtr2pred $*

@@ -1,0 +1,125 @@
+
+<mrs>
+<label vid='1'/><var vid='2'/>
+<ep><pred>PROP-OR-QUES_M_REL</pred><label vid='1'/>
+<fvpair><rargname>ARG0</rargname><var vid='2' sort='e'>
+<extrapair><path>PERF</path><value>+</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>MARG</rargname><var vid='5' sort='h'></var></fvpair>
+<fvpair><rargname>PSV</rargname><var vid='3' sort='u'></var></fvpair>
+<fvpair><rargname>TPC</rargname><var vid='4' sort='u'></var></fvpair></ep>
+<ep><pred>POLITE_REL</pred><label vid='6'/>
+<fvpair><rargname>ARG0</rargname><var vid='7' sort='i'></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='2' sort='e'>
+<extrapair><path>PERF</path><value>+</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>CARG</rargname><constant>please</constant></fvpair></ep>
+<ep><spred>_put_v_1_rel</spred><label vid='6'/>
+<fvpair><rargname>ARG0</rargname><var vid='2' sort='e'>
+<extrapair><path>PERF</path><value>+</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='10' sort='i'></var></fvpair>
+<fvpair><rargname>ARG2</rargname><var vid='9' sort='x'>
+    <extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
+<extrapair><path>GEND</path><value>N</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG3</rargname><var vid='8' sort='h'></var></fvpair></ep>
+<ep><pred>PRPSTN_M_REL</pred><label vid='8'/>
+<fvpair><rargname>ARG0</rargname><var vid='12' sort='e'>
+<extrapair><path>PERF</path><value>-</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>MARG</rargname><var vid='11' sort='h'></var></fvpair>
+<fvpair><rargname>PSV</rargname><var vid='14' sort='u'></var></fvpair>
+<fvpair><rargname>TPC</rargname><var vid='13' sort='u'></var></fvpair></ep>
+<ep><pred>PRON_REL</pred><label vid='15'/>
+<fvpair><rargname>ARG0</rargname><var vid='9' sort='x'>
+<extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
+<extrapair><path>GEND</path><value>N</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair></ep>
+<ep><pred>PRONOUN_Q_REL</pred><label vid='16'/>
+<fvpair><rargname>ARG0</rargname><var vid='9' sort='x'>
+<extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
+<extrapair><path>GEND</path><value>N</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>RSTR</rargname><var vid='17' sort='h'></var></fvpair>
+<fvpair><rargname>BODY</rargname><var vid='18' sort='h'></var></fvpair></ep>
+<ep><pred>_IN_P_REL</pred><label vid='19'/>
+<fvpair><rargname>ARG0</rargname><var vid='12' sort='e'>
+<extrapair><path>PERF</path><value>-</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='9' sort='x'>
+<extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
+<extrapair><path>GEND</path><value>N</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG2</rargname><var vid='20' sort='x'>
+<extrapair><path>DIV</path><value>-</value></extrapair>
+<extrapair><path>IND</path><value>+</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair></ep>
+<ep><pred>_THIS_Q_DEM_REL</pred><label vid='21'/>
+<fvpair><rargname>ARG0</rargname><var vid='20' sort='x'>
+<extrapair><path>DIV</path><value>-</value></extrapair>
+<extrapair><path>IND</path><value>+</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>RSTR</rargname><var vid='23' sort='h'></var></fvpair>
+<fvpair><rargname>BODY</rargname><var vid='22' sort='h'></var></fvpair></ep>
+<ep><spred>_brown_a_1_rel</spred><label vid='24'/>
+<fvpair><rargname>ARG0</rargname><var vid='25' sort='e'>
+<extrapair><path>PERF</path><value>-</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='20' sort='x'>
+<extrapair><path>DIV</path><value>-</value></extrapair>
+<extrapair><path>IND</path><value>+</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair></ep>
+<ep><pred>COMPOUND_REL</pred><label vid='24'/>
+<fvpair><rargname>ARG0</rargname><var vid='27' sort='e'>
+<extrapair><path>PERF</path><value>-</value></extrapair>
+<extrapair><path>PROG</path><value>-</value></extrapair>
+<extrapair><path>MOOD</path><value>INDICATIVE</value></extrapair>
+<extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='20' sort='x'>
+<extrapair><path>DIV</path><value>-</value></extrapair>
+<extrapair><path>IND</path><value>+</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG2</rargname><var vid='26' sort='x'>
+<extrapair><path>IND</path><value>+</value></extrapair></var></fvpair></ep>
+<ep><pred>UDEF_Q_REL</pred><label vid='28'/>
+<fvpair><rargname>ARG0</rargname><var vid='26' sort='x'>
+<extrapair><path>IND</path><value>+</value></extrapair></var></fvpair>
+<fvpair><rargname>RSTR</rargname><var vid='29' sort='h'></var></fvpair>
+<fvpair><rargname>BODY</rargname><var vid='30' sort='h'></var></fvpair></ep>
+<ep><spred>_paper_n_1_rel</spred><label vid='31'/>
+<fvpair><rargname>ARG0</rargname><var vid='26' sort='x'>
+<extrapair><path>IND</path><value>+</value></extrapair></var></fvpair></ep>
+<ep><spred>_bag_n_of_rel</spred><label vid='24'/>
+<fvpair><rargname>ARG0</rargname><var vid='20' sort='x'>
+<extrapair><path>DIV</path><value>-</value></extrapair>
+<extrapair><path>IND</path><value>+</value></extrapair>
+<extrapair><path>NUM</path><value>SG</value></extrapair>
+<extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
+<fvpair><rargname>ARG1</rargname><var vid='32' sort='i'></var></fvpair></ep>
+<hcons hreln='qeq'><hi><var vid='29' sort='h'></var></hi><lo><var vid='31' sort='h'></var></lo></hcons>
+<hcons hreln='qeq'><hi><var vid='23' sort='h'></var></hi><lo><var vid='24' sort='h'></var></lo></hcons>
+<hcons hreln='qeq'><hi><var vid='17' sort='h'></var></hi><lo><var vid='15' sort='h'></var></lo></hcons>
+<hcons hreln='qeq'><hi><var vid='11' sort='h'></var></hi><lo><var vid='19' sort='h'></var></lo></hcons>
+<hcons hreln='qeq'><hi><var vid='5' sort='h'></var></hi><lo><var vid='6' sort='h'></var></lo></hcons>
+</mrs>

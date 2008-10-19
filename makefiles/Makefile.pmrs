@@ -1,0 +1,14 @@
+STAMPS=0/stamp.pred-all 1/stamp.pred-all 2/stamp.pred-all
+
+all:	stamp.updated
+
+clean:
+	rm -f stamp.updated
+
+stamp.updated:	$(STAMPS)
+	touch $@
+
+%/stamp.pred-all:
+	(cd $*; make stamp.pred-all);
+
+.PHONY:	clean all

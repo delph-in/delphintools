@@ -1,0 +1,47 @@
+#!/bin/bash
+
+. $LTHOME/env/logon.env
+
+logon_setup () {
+	cat 2>&1 <<- SETTINGS
+		;;
+		;; when running from source, configure and compile the LOGON system
+		;;
+		(load "$LOGONROOT/lingo/lkb/src/general/loadup.lisp")
+		(pushnew :lkb *features*)
+		(pushnew :mrs *features*)
+		(pushnew :tsdb *features*)
+		(pushnew :mt *features*)
+		(pushnew :logon *features*)
+		(setf (system:getenv "DISPLAY") nil)
+		;; we don't need to compile now that the binary has been released -- eric-n: 2007/11/02
+		;(compile-system "tsdb")
+		;;
+		;; make sure to initialize [incr tsdb()] against our own start-up file
+		;;
+		(tsdb::initialize-tsdb nil :rc "$LOGONROOT/dot.tsdbrc")
+		(tsdb::tsdb :skeleton "$skeletondir")
+		(tsdb::tsdb :home "$TREEBANK")
+		(tsdb::tsdb :list)
+		(setf tsdb::*tsdb-exhaustive-p* nil)
+		(setf tsdb::*tsdb-semantix-hook* "mrs::get-mrs-string")
+		(setf tsdb::*tsdb-write-mrs-p* t)
+	SETTINGS
+	
+	if [ -n "$limit" ]; then
+		cat 2>&1 <<- LIMIT
+			(setf tsdb::*tsdb-maximal-number-of-analyses* $limit)
+			(setf tsdb::*tsdb-maximal-number-of-results* $limit)
+		LIMIT
+	fi
+	
+	if [ -n "$edges" ]; then
+		cat 2>&1 <<- EDGES
+			(set (intern "*MAXIMUM-NUMBER-OF-EDGES*" :lkb) $edges)
+			(set (intern "*UNPACK-EDGE-ALLOWANCE*" :lkb) $edges)
+			(set (intern "*TSDB-MAXIMAL-NUMBER-OF-EDGES*" :tsdb) $edges)
+		EDGES
+	fi
+}
+
+logon_setup

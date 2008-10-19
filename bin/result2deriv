@@ -1,0 +1,7 @@
+#!/bin/bash
+
+result2deriv () {
+	cut -d@ -f11
+}
+
+result2deriv

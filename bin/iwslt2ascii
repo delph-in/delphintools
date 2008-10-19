@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# iwslt2ascii - convert a pair of IWSLT06 format source and target files to a Logon ascii bitext file with comments
+# split sentences on common sentence-final punctuation, and print n-n mappings as separate sentence pairs
+# treat n-m mappings as a single sentence pair
+# Eric Nichols <eric-n@is.naist.jp>, Nara Institute of Science and Technology, 2008/07/02
+
+# N-N EXAMPLE
+
+# INPUT
+
+#JE_TRAIN_00001\下 の ホール に ございます 。 今 いくら か 御 持ち 致し ましょ う 。 何 か 外 に 必要 な 物 が ございまし たら 、 御 知ら せ 下さい 。
+#JE_TRAIN_00001\It's just down the hall. I'll bring you some now. If there is anything else you need, just let me know.
+# OUTPUT
+
+# # JE_TRAIN_00001:1
+# 下 の ホール に ございます 。
+# It's just down the hall.
+# 
+# # JE_TRAIN_00001:2
+# 今 いくら か 御 持ち 致し ましょ う 。
+# I'll bring you some now.
+# 
+# # JE_TRAIN_00001:3
+# 何 か 外 に 必要 な 物 が ございまし たら 、 御 知ら せ 下さい 。
+# If there is anything else you need, just let me know.
+
+# N-M EXAMPLE
+
+# INPUT
+
+#JE_TRAIN_00002\結構 です 。 それ を 頂き ましょ う 。 包ま なく て も 構い ません 。	
+#JE_TRAIN_00001\It's just down the hall. I'll bring you some now. If there is anything else you need, just let me know.
+
+#OUTPUT
+
+# # JE_TRAIN_00002:3-2
+# 結構 です 。 それ を 頂き ましょ う 。 包ま なく て も 構い ません 。
+# No worry about that. I'll take it and you need not wrap it up.
+
+protect_tabs () {
+	9 sed 's/	/\\t/g'
+}
+
+restore_tabs () {
+	9 sed 's/\\t/	/g'
+}
+
+# split on both half- and -full width full stops, question marks, and exclamation points
+# in adition to Japanese "maruten"
+split_sent () {
+	9 sed 's/([.?!。．？！]+) *([^ ])/\1	\2/g
+		   s/(Mr\.|Mrs\.|Ms\.|Dr\.)	/\1 /g'
+}
+
+# delimit sentences with ###
+# BUGS: does not nandle titles or common abreviations
+iwslt_prep () {
+	protect_tabs |
+	split_sent |
+	9 sed 's/\\/###/
+		   s/	/###/g'
+}
+
+iwslt_rest () {
+	restore_tabs
+}
+
+# print ascii file format for input: src_id###src-1###...###src-n \t tgt_id###tgt_1###tgt_m
+iwslt_format () {
+	awk '
+	BEGIN {
+		FS = "	"
+	}
+	{
+		s = split($1, src, "###")
+		t = split($2, tgt, "###")
+		sid = src[1]
+		tid= tgt[1]
+		
+		if (sid != tid) {
+			printf "error: %s != %s\n", sid, tid | "cat 1>&2"
+		}
+		else if (s == t) {
+			for (i=2; i<=s; i++) {
+				printf "# %s:%s\n", sid, (i-1)
+				print src[i]
+				print tgt[i]
+				print ""
+			}
+		}
+		else {
+				printf "# %s:%s-%s\n", sid, (s-1), (t-1)
+				print clean($1)
+				print clean($2)
+				print ""
+		}
+	}
+		
+	function clean(s) {
+		sub(/^[^#]+###/, "", s)
+		gsub("###", " ", s)
+		return s
+	}'
+}
+
+iwslt2ascii () {
+	paste <(iwslt_prep < $1) <(iwslt_prep < $2) |
+	iwslt_format |
+	iwslt_rest
+}
+
+if [ $# != 2 ]; then
+	echo 1>&2 "usage: iwslt2ascii <source> <target>" 
+else
+	iwslt2ascii $*
+fi

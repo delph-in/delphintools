@@ -1,0 +1,32 @@
+#!/bin/bash
+
+profile2mrs () {
+	awk '
+	BEGIN {
+		FS = "@"
+	}
+	{
+		id = $1
+		parse = $2
+		mrs = $14
+		
+		file = id "." parse ".mrs"
+		dir = 1000 * int(id/1000)
+		path = profile "/" dir
+		
+		system("mkdir -p " path)
+		print mrs > (path "/" file)
+		close(path "/" file)
+	}' profile=$1
+}
+
+profile=$1
+if [ -z "$profile" ]; then
+	profile=`pwd`
+fi
+
+if [ ! -e "$profile/result" ]; then
+	echo "result file not found! is $profile really a profile directory?"
+else
+	profile2mrs $profile < "$profile/result"
+fi

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+logon_parse_object () {
+	object=$1
+	
+	# we need to reverse the order of the ascii file to parse the target language.
+	# currently we keep only the first reference sentence so that the ids will align
+	# dump the reversed ascii to the ascii/ directory and set $skeleton to point to
+	# it so that the profile is created with target langauge sentences
+	if [ -n "$ascii" ]; then
+		cp -f $skeleton $TREEBANK/$name/ascii/
+		object_ascii=$TREEBANK/$name/ascii/$(basename $skeleton ".object")
+		objectify_ascii < $skeleton > $object_ascii
+		skeleton=$object_ascii
+	fi
+	
+	logon_setup_cpus
+	logon_setup_profile $object
+	cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$object/Makefile
+	
+	cat 2>&1 <<- OBJECT
+		(lkb::read-script-file-aux "$grammarscript")
+		(setf *tsdb-trees-hook* "lkb::parse-tree-structure")
+	OBJECT
+	
+	if [ -n "$processor" ]; then
+		cat 2>&1 <<- OBJECT
+			(tsdb:tsdb :cpu :$processor :file t :count $count $tsdb_options)
+		OBJECT
+	fi
+	
+	cat 2>&1 <<- OBJECT
+		(tsdb::tsdb :process "$object" :condition "i-wf=1")
+	OBJECT
+}
+
+logon_parse_object $*

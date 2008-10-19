@@ -1,0 +1,7 @@
+#!/bin/bash
+
+result2mrs () {
+	cut -d@ -f14
+}
+
+result2mrs

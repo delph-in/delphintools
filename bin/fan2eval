@@ -1,0 +1,12 @@
+#!/usr/local/plan9/bin/rc
+
+fn fltrsegs {
+	badsegs=$1
+	segfile=$2
+	fltr=$pid.fltr
+	seg2badids < $badsegs > $fltr
+	grep -vf $fltr $segfile
+	rm -f $fltr
+}
+
+fltrsegs $*

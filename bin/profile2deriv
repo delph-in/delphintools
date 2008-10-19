@@ -1,0 +1,15 @@
+#!/bin/bash
+
+profile2deriv () {
+	sort -t@ -k1n -k2n -u |
+	awk '
+	BEGIN {
+		FS="@"
+	}
+	{
+		deriv = ($1 "." $2 ".deriv")
+		print | ("result2deriv > " deriv)
+	}'
+}
+
+profile2deriv

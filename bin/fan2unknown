@@ -1,0 +1,19 @@
+#!/bin/bash
+
+fan2unknown () {
+	awk '
+	BEGIN {
+		FS = "|"
+	}
+	/error: unknown transfer predicates:/ {
+		gsub(/[,.]/, "")
+		for (i=3; i<NF; i++)
+			print $i
+	}' |
+	grep -v "^ *$" |
+	sort |
+	uniq -c |
+	sort -n
+}
+
+fan2unknown

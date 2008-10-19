@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# transfer a profile and store intermediate mrs in <transfer>
+# assumes <source> exists with mrs parse results
+logon_transfer () {
+	source=$1
+	transfer=$2
+	logon_setup_profile $source
+	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$transfer/Makefile
+	
+	cat 2>&1 <<- TRANSFER
+		(lkb::read-script-file-aux "$transferscript")
+	TRANSFER
+
+	if [ -n "$edges" ]; then
+		if [ $edges -gt 0 ]; then
+			cat 2>&1 <<- TRANSFER
+				(setf mt::*transfer-edge-limit* $edges)
+			TRANSFER
+		fi
+	fi
+
+	if [ -n "$limit" ]; then	
+		n=0
+		while [ $n -lt $limit ]; do
+			logon_setup_profile $transfer/$n
+			cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$transfer/$n/Makefile
+			cat 2>&1 <<- TRANSFER
+				(tsdb::tsdb-do-process "$transfer/$n"
+									   :condition "result-id=$n"
+									   :type
+									   :transfer
+									   :overwrite t
+									   :gold "$source")
+			TRANSFER
+			n=`expr $n + 1`
+		done
+	fi
+}
+
+logon_transfer $*

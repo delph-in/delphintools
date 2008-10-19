@@ -1,0 +1,19 @@
+#!/bin/bash
+
+fan2invalid () {
+	awk '
+	BEGIN {
+		FS = "|"
+	}
+	/error: invalid predicates:/ {
+		gsub(/[,.]/, "")
+		for (i=4; i<NF; i++)
+			print $i
+	}' |
+	grep -v "^ *$" |
+	sort |
+	uniq -c |
+	sort -n
+}
+
+fan2invalid

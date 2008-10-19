@@ -1,0 +1,162 @@
+#!/usr/local/plan9/bin/rc
+
+fn tdl2gen+lex_tbl {
+	9 grep -v '^;' |
+	9 awk '
+	BEGIN {
+		RS = "\n\n"
+		OFS = "\t"
+	}
+	/:=/ {
+		print $1, $3
+	}'
+}
+
+fn set2pos+gen_tbl {
+	9 awk '
+	BEGIN {
+		OFS = "\t"
+	}
+	/^.+-.+\+.+\$.+$/ {
+		print $1, $2
+	}' |
+	9 tr -d '$'
+}
+
+fn make_pos+gen+lex_tbl {
+	set2pos+gen_tbl < $LOGONROOT/dfki/jacy/pet/japanese.set | 9 sort -k2 > pos+gen.tmp
+	tdl2gen+lex_tbl < $LOGONROOT/dfki/jacy/lex/generics.tdl | 9 sort > gen+lex.tmp
+	9 join -12 -21 -o1.1,0,2.2 gen+lex.tmp pos+gen.tmp 
+#	rm -f pos+gen.tmp gen+lex.tmp
+}
+
+fn cha2lemma+pos {
+	cut -f2,3 -d' ' |	# get lemma and pos
+	9 sort -u |
+	awk '
+	NF == 2 {
+		print
+	}'
+}
+
+fn not_in_grammar {
+	grammar=$1
+	9 awk '
+	BEGIN {
+		while (getline w <"'$grammar'" > 0) {
+			dict[w] = "true"
+		}
+	}
+	{
+		lemma = $1
+		pos = $2
+		if (! (lemma in dict)) {
+			print
+		}
+	}'
+}
+
+fn make_lemma+pos_tbl {
+	cat /home/eric/research/data/parallel/tanaka/bitext/train/*.cha \
+		/home/eric/research/data/parallel/tanaka/bitext/dev/*.cha |
+	cha2lemma+pos |
+	not_in_grammar $MTRHOME/jacy-words.txt
+}
+
+fn make_lemma+pos+gen+lex_tbl { 
+	9 sort -k2 -k1 $1 > lemma+pos.sorted.tmp
+	9 sort $2 > pos+gen+lex+rmrs.sorted.tmp
+	9 join -12 -21 -o1.1,0,2.2,2.3,2.4,2.5 lemma+pos.sorted.tmp pos+gen+lex+rmrs.sorted.tmp
+#	rm -f lemma+pos.sorted.tmp pos+gen+lex+rmrs.sorted.tmp
+}
+
+fn lemma+pos+gen+lex2tdl {
+	9 awk '
+	{
+		orth = $1
+		pos = $2
+		generic = $3
+		lex = $4
+		rmrs = $5
+		slot = $6
+
+		if (slot == "PRED") {
+			rel = "_" orth "_" rmrs "_g_rel"
+		}
+		else {
+			rel = orth
+		}
+		
+		printf "%s-tc :=\n", orth
+		printf "%s &\n", lex
+		printf "[ STEM < \"%s\" >,\n", orth
+		printf "  SYNSEM.LKEYS.KEYREL.%s \"%s\" ].\n", slot, rel
+		printf "\n"
+	}'
+}
+
+fn lemma+pos+gen+lex2rev {
+	9 awk '
+	BEGIN {
+		OFS = "\t"
+	}
+	{
+		orth = $1
+		pos = $2
+		generic = $3
+		lex = $4
+		rmrs = $5
+		slot = $6
+		
+		name = orth "-tc"
+		userid = "eric"
+		modstamp = "\\N" 
+		type = lex
+		orthography = orth
+		keyrel = "\\N"
+		keytag = "\\N"
+		altkey = "\\N"
+		alt2key = "\\N"
+		altkeytag = "\\N"
+		compkey = "\\N"
+		idiom = "\\N"
+		pronunciation = "\\N"
+		comments = "Automatically generated from the Tanaka corpus"
+		lang = "ja"
+		country = "JP"
+		dialect = "\\N"
+		confidence = "0"
+		source = "tanaka-unknowns.lex"
+
+		"date" | getline modstamp
+		close("date")
+
+		rel = "_" orth "_" rmrs "_g_rel"
+		if (slot == "PRED") {
+			keyrel = "\"" rel "\""
+		}
+		else {
+			keytag = "\"" orth "\"" 
+		}
+		
+		print name, userid, modstamp, type, orthography, keyrel, keytag, altkey, alt2key, altkeytag, compkey, idiom, pronunciation, comments, lang, country, dialect, confidence, source
+	}'
+}
+
+make_lemma+pos_tbl |
+9 grep -v -f blacklist.txt |
+sed -r 's/-[^ -]+$//g' |
+9 sort -u > lemma+pos.tmp
+
+grep -v '#' $LOGONROOT/dfki/jacy/Documentation/Generics |
+grep -v '^$' |
+sed 's/\t/ /g' > pos+gen+lex+rmrs.tmp
+
+make_lemma+pos+gen+lex_tbl lemma+pos.tmp pos+gen+lex+rmrs.tmp \
+			 > lemma+pos+gen+lex+rmrs.tmp
+
+lemma+pos+gen+lex2tdl < lemma+pos+gen+lex+rmrs.tmp \
+		      > $LOGONROOT/dfki/jacy/lex/tanaka-unknowns.tdl
+
+lemma+pos+gen+lex2rev < lemma+pos+gen+lex+rmrs.tmp \
+		      > $LOGONROOT/dfki/jacy/lex/tanaka-unknowns.rev

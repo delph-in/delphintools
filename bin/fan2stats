@@ -1,0 +1,39 @@
+#!/bin/bash
+
+fan2stats () {
+	grep '|=' |
+    sed 's/:0//g
+	 	 s/+0.0//g
+	 	 s/[{}<>;]//g' |
+    awk '
+    /\|=/ {
+		parse_num += $2
+		parse_denom += $4
+		transfer_num += $6
+		transfer_denom += $8
+		generate_num += $11
+		generate_denom += $13
+		total_num += $17  
+		total_denom += $19
+		b = NF - 1 
+		split($b, scores, "|")
+		bleu += scores[1] * $17 
+		oracle += $NF * $17
+    }
+    END {
+		parse_per = 100 * parse_num / parse_denom
+		transfer_per = 100 * transfer_num / transfer_denom
+		generate_per = 100 * generate_num / generate_denom
+		total_per = 100 * total_num / total_denom
+		bleu /= total_num
+		oracle /= total_num
+		precision = bleu
+		recall = total_num / total_denom
+		f = 100 * (2 * precision * recall) / (precision + recall)
+		printf "& %d / %d (%2.2f) & %d / %d (%2.2f) & %d / %d (%2.2f) & %d / %d (%2.2f) & %2.4f & %2.4f & %2.2f \\\\\n", \
+	            parse_num, parse_denom, parse_per, transfer_num, transfer_denom, transfer_per, \
+	            generate_num, generate_denom, generate_per, total_num, total_denom, total_per, bleu, oracle, f
+   }'
+}
+
+fan2stats

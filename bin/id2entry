@@ -1,0 +1,8 @@
+#!/bin/bash
+
+id2entry () {
+	id=$1
+	grep -E "^$id@"
+}
+
+id2entry $*

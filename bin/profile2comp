@@ -1,0 +1,82 @@
+#!/bin/bash
+
+sorted_entries () {
+	(for f in $(find $dir -name "*.xml.$suffix") ; do
+		echo $(basename $f)
+	done) |
+	cut -f1 -d. |
+	sort -n -u
+}
+
+sorted_dirs () {
+	(for d in $(find $* -mindepth 1 -maxdepth 1 -type d ) ; do
+		echo "$(dirname $d)	$(basename $d)"
+	done) |
+	sort -n -k2 |
+	tr "\t" "/"
+}
+
+profile2comp() {
+	profile=$1
+	suffix=$2
+	
+	entries=`sorted_entries $profile`
+	pmrs_dirs=$(sorted_dirs $(sorted_dirs $profile/pmrs))
+	omrs_dirs=`sorted_dirs $profile/omrs`
+	for e in $entries ; do
+		for p in $pmrs_dirs ; do
+			for pf in $p/$e.[0-2].mrs.xml.$suffix ; do
+				for o in $omrs_dirs ; do
+					for of in $o/$e.[0-2].mrs.xml.$suffix ; do
+						if [ -f "$pf" -a -f "$of" ]; then
+							pred2comp $pf $of
+						fi
+					done
+				done
+			done
+		done
+	done
+}
+
+usage () {
+	echo 1>&2 "usage: profile2comp [-a|--all|-p|--pred|-s|--spred] [<profile>]"
+}
+
+while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
+	case $1 in
+		-a|--all)
+			suffix=preds
+			shift 1
+		;;
+		-p|--pred)
+			suffix=pred
+			shift 1
+		;;
+		-s|--spred)
+			suffix=spred
+			shift 1
+		;;
+		*)
+			usage
+			exit 1
+	esac
+done
+
+profile=$1
+if [ -z "$profile" ]; then
+	profile=$PWD
+fi
+
+if [ "${profile#/}" = "$profile" ]; then
+	profile="$PWD/$profile"
+fi
+
+if [ -z "$suffix" ]; then
+	usage
+	exit 1
+elif [ ! -d "$profile" ]; then
+	echo 1>&2 "ERROR: unable to open '$profile'"
+	exit 1
+else
+	profile2comp $profile $suffix
+fi

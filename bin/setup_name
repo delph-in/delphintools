@@ -1,0 +1,18 @@
+#!/bin/bash
+
+setup_name () {
+	export name=$1
+	
+	export DATE=`date "+%Y-%m-%d"`
+	export LOG=$LOGONTMP/$name_$DATE.fan.log
+	export OUTPUT=$LOGONTMP/$name_$DATE.fan
+	export XML=$LOGONTMP/$name_$DATE.xml
+
+	export source=$name/smrs
+	export transfer=$name/tmrs
+	export partial=$name/pmrs
+	export generate=$name/gmrs
+	export object=$name/omrs
+}
+
+setup_name $*

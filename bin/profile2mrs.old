@@ -1,0 +1,15 @@
+#!/bin/bash
+
+profile2mrs () {
+	sort -t@ -k1n -k2n -u |
+	awk '
+	BEGIN {
+		FS="@"
+	}
+	{
+		mrs = ($1 "." $2 ".mrs")
+		print | ("result2mrs > " mrs)
+	}'
+}
+
+profile2mrs

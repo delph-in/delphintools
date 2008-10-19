@@ -1,0 +1,17 @@
+#!/bin/bash
+	
+fan2src+ref+trans () {
+	grep -E '^(\|[<@>].*)?$' |
+	9 uniq |
+	tail -n +2 |
+	9 awk '
+	BEGIN {
+		RS = "\n\n"
+		FS = OFS = "\n"
+	}
+	{
+		print $1, $2, $3 "\n"
+	}'
+}
+
+fan2src+ref+trans

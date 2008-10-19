@@ -1,0 +1,13 @@
+#!/bin/bash
+
+mv $LOGONROOT/dfki/jacy $LOGONROOT/dfki/jacy.new
+mv $LOGONROOT/dfki/jacy.logon $LOGONROOT/dfki/jacy
+mv $LOGONROOT/lingo/erg $LOGONROOT/lingo/erg.new
+mv $LOGONROOT/lingo/erg.logon $LOGONROOT/lingo/erg
+
+cd $LOGONROOT && cvs update
+
+mv $LOGONROOT/dfki/jacy $LOGONROOT/dfki/jacy.logon
+mv $LOGONROOT/dfki/jacy.new $LOGONROOT/dfki/jacy
+mv $LOGONROOT/lingo/erg $LOGONROOT/lingo/erg.logon
+mv $LOGONROOT/lingo/erg.new $LOGONROOT/lingo/erg

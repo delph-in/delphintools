@@ -1,0 +1,14 @@
+#!/bin/bash
+
+profile=$1
+if [ -z "$profile" ]; then
+	profile=$PWD
+fi
+
+if [ ! -e "$profile/result" ]; then
+	echo "result file not found! is $profile really a profile directory?"
+else
+	for dir in $profile/*0 ; do
+		mrs2xml `find $dir -name "*.mrs"`
+	done
+fi

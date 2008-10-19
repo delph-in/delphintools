@@ -1,0 +1,11 @@
+#!/bin/bash
+
+findpreds () {
+	diff -y - <(get_grm_preds) |
+	awk '
+	/[<\|]/ {
+		print $1
+	}'
+}
+
+findpreds

@@ -1,0 +1,36 @@
+#!/usr/local/plan9/bin/rc
+
+fn fan2id {
+	grep -E '^\|[<@>]' |
+	$SED_REGEX 's#^\|<#\n\|<#g' |
+	tail +2 |
+	awk '
+	BEGIN {
+		FS="\\|"
+		OFS="\t"
+	}
+	/---/ {
+		print ""
+		id=$4
+		gsub(/[() ]/, "", id)
+		gsub(/---.*$/, "", id)
+		printf id "\t"
+	}
+	NF >= 3 {
+		printf $3 "\t"
+	}' |
+	tail +2 |
+	sort -k1n |
+	cut -f2-
+}
+
+fn id2txt {
+	sed 's/\t/\n/g'
+}
+
+fn fan2txt {
+	fan2id |
+	id2txt
+}
+
+fan2txt

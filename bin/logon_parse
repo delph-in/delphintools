@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# parse a profile and store mrs in <source>
+logon_parse () {
+	source=$1
+	logon_setup_cpus
+	logon_setup_profile $source
+	
+	cat 2>&1 <<- PARSE
+		(lkb::read-script-file-aux "$grammarscript")
+		(setf *tsdb-trees-hook* "lkb::parse-tree-structure")
+	PARSE
+	
+	if [ -n "$processor" ]; then
+		cat 2>&1 <<- PARSE
+			(tsdb:tsdb :cpu :$processor :file t :count $count $tsdb_options)
+		PARSE
+	fi
+	
+	cat 2>&1 <<- PARSE
+		(tsdb::tsdb :process "$source" :condition "i-wf=1")
+	PARSE
+	
+	if [ -d $TREEBANK/$source ]; then
+		cp -f $LTHOME/makefiles/Makefile.treebank $TREEBANK/$name/Makefile
+		cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$source/Makefile
+	fi
+}
+
+logon_parse $*

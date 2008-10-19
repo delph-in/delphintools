@@ -1,0 +1,16 @@
+#!/bin/bash
+
+objectify_ascii () {
+	awk '
+	BEGIN {
+		FS=OFS="\n"
+		RS=ORS=""
+	}
+	{
+		src=$1
+		tgt=$2
+		print tgt, src, "\n"
+	}'
+}
+
+objectify_ascii

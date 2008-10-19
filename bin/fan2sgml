@@ -1,0 +1,8 @@
+#!/usr/local/plan9/bin/rc
+
+fn fan2sgml {
+	fan2txt |
+	1strans
+}
+
+fan2sgml

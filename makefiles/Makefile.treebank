@@ -1,0 +1,21 @@
+all:	comp.pred comp.preds comp.spred
+
+clean:
+	rm -f comp.*
+
+comp.pred:	omrs/stamp.pred-all pmrs/stamp.updated
+	profile2comp -p > $@
+
+comp.preds:	omrs/stamp.pred-all pmrs/stamp.updated
+	profile2comp -a > $@
+
+comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
+	profile2comp -s > $@
+
+%/stamp.updated:	%/0/result
+	(cd $*; make stamp.updated);
+
+%/stamp.pred-all:	%/result
+	(cd $*; make stamp.pred-all);
+
+.PHONY: clean all

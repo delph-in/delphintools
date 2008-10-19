@@ -1,0 +1,7 @@
+#!/bin/bash
+
+result2pst () {
+	cut -d@ -f13
+}
+
+result2pst

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+get_grm_preds () {
+	(cd $MTRHOME && make-wprs.sh >/dev/null 2>/dev/null)
+	cat $MTRHOME/wprs/word-hpsg_cat-rel.*.txt |
+	cut -d'	' -f3 |
+	tr -d \"  |
+	sort -u
+}
+
+get_grm_preds

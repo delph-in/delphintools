@@ -1,0 +1,14 @@
+#!/bin/bash
+
+bitext2src () {
+	awk '
+	BEGIN {
+		FS="\n"
+		RS="\n\n"
+	}
+	{
+		print $1
+	}'
+}
+
+bitext2src
