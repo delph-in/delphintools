@@ -3,14 +3,16 @@
 fan2src+ref+trans () {
 	grep -E '^(\|[<@>].*)?$' |
 	9 uniq |
+	cut -d'|' -f3 |
 	tail -n +2 |
 	9 awk '
 	BEGIN {
 		RS = "\n\n"
-		FS = OFS = "\n"
+		FS = "\n"
+		OFS = "\t"
 	}
 	{
-		print $1, $2, $3 "\n"
+		print $1, $2, $3
 	}'
 }
 
