@@ -1,7 +1,7 @@
 #!/bin/bash
 
 xml2preds () {
-	xsltproc $LTHOME/preds.xslt -
+	xsltproc $LTHOME/xslt/preds.xslt -
 }
 
 xml2preds
