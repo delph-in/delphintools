@@ -21,6 +21,7 @@ profile2comp() {
 	suffix=$2
 	
 	entries=`sorted_entries $profile`
+	echo "entries:	$entries"
 	pmrs_dirs=$(sorted_dirs $(sorted_dirs $profile/pmrs))
 	omrs_dirs=`sorted_dirs $profile/omrs`
 	for e in $entries ; do
@@ -29,6 +30,7 @@ profile2comp() {
 				for o in $omrs_dirs ; do
 					for of in $o/$e.[0-2].mrs.xml.$suffix ; do
 						if [ -f "$pf" -a -f "$of" ]; then
+							echo 1>&2 pred2comp $pf $of
 							pred2comp $pf $of
 						fi
 					done
