@@ -1,0 +1,174 @@
+MOSES		= $(HOME)/ox/moses
+CORPUS		= tc-081019
+
+TEST_BASE_SRC	= $(MOSES)/mgiza/$(CORPUS)/ja-en/factorless/evaluation/tanaka.test.input
+TEST_BASE_TGT	= $(MOSES)/mgiza/$(CORPUS)/ja-en/factorless/evaluation/tanaka.test.mert.output
+TEST_FANS	= $(shell echo *test*.fan | sort)
+
+DEV_BASE_SRC	= $(MOSES)/mgiza/$(CORPUS)/ja-en/factorless/tuning/tanaka.dev.input
+DEV_BASE_TGT	= $(MOSES)/mgiza/$(CORPUS)/ja-en/factorless/tuning/run6.out.gz
+DEV_FANS	= $(shell echo *dev*.fan | sort)
+
+SRC		= ja
+TGT		= en
+
+recaser_dir	= $(MOSES)/recaser/$(TGT)/tanaka-train
+samples		= 100
+
+all:		$(CORPUS).dev.tbl.pdf $(CORPUS).test.tbl.pdf
+
+%.pdf:	%.tex
+	pdflatex $<
+
+%.tbl.tex:	%.tbl
+	tbl2tex < $< > $@
+
+%.tbl:	%.tab
+	tab2tbl < $< > $@ 
+
+%.dev.tab:	dev
+	scores2tab dev | cut -f2- > $@
+	
+%.test.tbl:	test
+	scores2tab test | cut -f2- > $@
+
+dev:	$(CORPUS).dev.uc+detok.trans.logon-bleu $(CORPUS).dev.uc+detok.base.logon-bleu \
+		$(CORPUS).dev.uc+detok.trans.multi-bleu $(CORPUS).dev.uc+detok.base.multi-bleu \
+		$(CORPUS).dev.uc+detok.trans.meteor $(CORPUS).dev.uc+detok.base.meteor \
+		$(CORPUS).dev.uc+detok.trans.nist $(CORPUS).dev.uc+detok.base.nist \
+		$(CORPUS).dev.uc+detok.trans.neva $(CORPUS).dev.uc+detok.base.neva \
+		$(CORPUS).dev.uc+detok.trans.sig $(CORPUS).dev.uc+detok.base.sig \
+		$(CORPUS).dev.lc+tok.trans.logon-bleu	$(CORPUS).dev.lc+tok.base.logon-bleu \
+		$(CORPUS).dev.lc+tok.trans.multi-bleu $(CORPUS).dev.lc+tok.base.multi-bleu \
+		$(CORPUS).dev.lc+tok.trans.meteor $(CORPUS).dev.lc+tok.base.meteor \
+		$(CORPUS).dev.lc+tok.trans.nist $(CORPUS).dev.lc+tok.base.nist \
+		$(CORPUS).dev.lc+tok.trans.neva $(CORPUS).dev.lc+tok.base.neva \
+		$(CORPUS).dev.lc+tok.trans.sig $(CORPUS).dev.lc+tok.base.sig
+
+test:	$(CORPUS).test.uc+detok.trans.logon-bleu $(CORPUS).test.uc+detok.base.logon-bleu \
+		$(CORPUS).test.uc+detok.trans.multi-bleu $(CORPUS).test.uc+detok.base.multi-bleu \
+		$(CORPUS).test.uc+detok.trans.meteor $(CORPUS).test.uc+detok.base.meteor \
+		$(CORPUS).test.uc+detok.trans.nist $(CORPUS).test.uc+detok.base.nist \
+		$(CORPUS).test.uc+detok.trans.neva $(CORPUS).test.uc+detok.base.neva \
+		$(CORPUS).test.uc+detok.trans.sig $(CORPUS).test.uc+detok.base.sig \
+		$(CORPUS).test.lc+tok.trans.logon-bleu $(CORPUS).test.lc+tok.base.logon-bleu \
+		$(CORPUS).test.lc+tok.trans.multi-bleu $(CORPUS).test.lc+tok.base.multi-bleu \
+		$(CORPUS).test.lc+tok.trans.meteor $(CORPUS).test.lc+tok.base.meteor \
+		$(CORPUS).test.lc+tok.trans.nist $(CORPUS).test.lc+tok.base.nist \
+		$(CORPUS).test.lc+tok.trans.neva $(CORPUS).test.lc+tok.base.neva \
+		$(CORPUS).test.lc+tok.trans.sig $(CORPUS).test.lc+tok.base.sig
+
+clean:
+	rm -f $(CORPUS).*
+
+%.dev.uc+detok.sb:	$(DEV_BASE_SRC) $(DEV_BASE_TGT).detok
+	zcat -cf $(DEV_BASE_TGT).detok | \
+	paste $(DEV_BASE_SRC) - | \
+	sed -r 's/^	+//g; s/ *	 */	/g; s/[	 ]+$$//g' > $@
+
+%.dev.lc+tok.sb:	$(DEV_BASE_SRC) $(DEV_BASE_TGT)
+	zcat -cf $(DEV_BASE_TGT) | \
+	paste $(DEV_BASE_SRC) - | \
+	tr A-Z a-z | \
+	sed -r 's/^	+//g; s/ *	 */	/g; s/[	 ]+$$//g' > $@
+
+%.dev.uc+detok.srt:	$(DEV_FANS)
+	cat $(DEV_FANS) | fan2src+ref+trans > $@
+
+%.dev.lc.srt:	$(DEV_FANS)
+	cat $(DEV_FANS) | fan2src+ref+trans | tr A-Z a-z > $@
+
+%.test.uc+detok.sb:	$(TEST_BASE_SRC) $(TEST_BASE_TGT).detok
+	zcat -cf $(TEST_BASE_TGT).detok | \
+	paste $(TEST_BASE_SRC) - | \
+	sed -r 's/^	+//g; s/ *	 */	/g; s/[	 ]+$$//g' > $@
+
+%.test.lc+tok.sb:	$(TEST_BASE_SRC) $(TEST_BASE_TGT)
+	zcat -cf $(TEST_BASE_TGT) | \
+	paste $(TEST_BASE_SRC) - | \
+	tr A-Z a-z | \
+	sed -r 's/^	+//g; s/ *	 */	/g; s/[	 ]+$$//g' > $@
+
+%.test.uc+detok.srt:     $(TEST_FANS)
+	cat $(TEST_FANS) | fan2src+ref+trans > $@
+
+%.test.lc.srt:	$(TEST_FANS)
+	cat $(TEST_FANS) | fan2src+ref+trans | tr A-Z a-z > $@
+
+%.src:	%.srbt
+	cut -f1 < $< > $@
+
+%.ref:	%.srbt
+	cut -f2 < $< > $@
+
+%.base:	%.srbt
+	cut -f3 < $< > $@
+
+%.trans:	%.srbt
+	cut -f4 < $< > $@
+
+%.trans.logon:	%.src %.ref %.trans
+	paste $^ | srt2logon > $@
+
+%.base.logon:	%.src %.ref %.base
+	paste $^ | srt2logon > $@
+
+%.srbt:	%.sb %.srt
+	(join -j1 -t'	' -o 2.1,2.2,1.2,2.3 $^ | \
+	awk 'BEGIN{FS = "\t"} $$4 != ""' | \
+	sed -r 's/^	+//g; s/ *	 */	/g; s/[	 ]+$$//g' > $@)
+
+%.lc+tok.srt:	%.lc+tok.s %.lc+tok.r %.lc+tok.t
+	paste $^ > $@
+
+%.lc+tok.s:	%.lc.srt
+	cut -f1 < $< > $@
+
+%.lc+tok.r:	%.lc.srt
+	cut -f2 < $< | tok_en > $@
+
+%.lc+tok.t:	%.lc.srt
+	cut -f3 < $< | tok_en > $@
+
+%.base.neva:   %.src %.ref %.base
+	moses_neva $^ | tee $@
+
+%.trans.neva:   %.src %.ref %.trans
+	moses_neva $^ | tee $@
+	
+%.base.nist:   %.src %.ref %.base
+	moses_nist $^ | tee $@
+
+%.trans.nist:   %.src %.ref %.trans
+	moses_nist $^ | tee $@
+
+%.base.meteor:   %.base %.ref
+	moses_meteor $^ | tee $@
+
+%.trans.meteor:   %.trans %.ref
+	moses_meteor $^ | tee $@
+
+%.trans.sig:	%.trans %.ref %.base
+	moses_eval_sig -s $(samples) $^ | tee $@
+
+%.base.sig:	%.base %.ref
+	moses_eval_sig -s $(samples) $^ | tee $@
+
+%.logon-bleu:	%.logon
+	($(LOGONROOT)/ntnu/bleu/bleu.pl $^ | \
+	awk '{total += $$0}END{printf "BLEU = %3.2f\tSENT = %d\n", 100*total/NR, NR}' | tee $@)
+
+%.base.multi-bleu:	%.ref %.base
+	moses_bleu $^ | tee $@
+
+%.trans.multi-bleu:	%.ref %.trans
+	moses_bleu $^ | tee $@
+
+%.detok:	%.rc
+	moses_detokenize $(TGT) < $< > $@
+
+%.rc:	$(recaser_dir)/moses.ini %
+	moses_recase $^ > $@
+
+.PHONY:	all clean
+.SECONDARY:
