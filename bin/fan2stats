@@ -30,9 +30,9 @@ fan2stats () {
 		precision = bleu
 		recall = total_num / total_denom
 		f = 100 * (2 * precision * recall) / (precision + recall)
-		printf "& %d / %d (%2.2f) & %d / %d (%2.2f) & %d / %d (%2.2f) & %d / %d (%2.2f) & %2.4f & %2.4f & %2.2f \\\\\n", \
+		printf "& %d / %d (%3.2f) & %d / %d (%3.2f) & %d / %d (%3.2f) & %d / %d (%3.2f) & %3.2f & %3.2f & %3.2f \\\\\n", \
 	            parse_num, parse_denom, parse_per, transfer_num, transfer_denom, transfer_per, \
-	            generate_num, generate_denom, generate_per, total_num, total_denom, total_per, bleu, oracle, f
+	            generate_num, generate_denom, generate_per, total_num, total_denom, total_per, 100*bleu, 100*oracle, f
    }'
 }
 
