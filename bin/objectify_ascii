@@ -7,8 +7,17 @@ objectify_ascii () {
 		RS=ORS=""
 	}
 	{
-		src=$1
-		tgt=$2
+                if (match($1, /^(\[[0-9]+\] +)(.+)(;;[^;]+)$/, ids)) {
+                        num = ids[1]
+                        src = ids[2]
+                        tid = ids[3]
+		        tgt = num $2 tid
+                }
+                else {
+                        src = $1
+                        tgt = $2
+                }
+
 		print tgt, src, "\n"
 	}'
 }
