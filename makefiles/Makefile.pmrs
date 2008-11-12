@@ -1,3 +1,4 @@
+LTHOME ?= $(HOME)/logontools
 STAMPS=0/stamp.pred-all 1/stamp.pred-all 2/stamp.pred-all
 
 all:	stamp.updated
@@ -8,7 +9,10 @@ clean:
 stamp.updated:	$(STAMPS)
 	touch $@
 
-%/stamp.pred-all:
-	(cd $*; make stamp.pred-all);
+%/Makefile:	$(LTHOME)/makefiles/Makefile.profile
+	cp $< $@
+
+%/stamp.pred-all:	%/Makefile
+	make -C $* stamp.pred-all
 
 .PHONY:	clean all

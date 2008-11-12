@@ -1,4 +1,11 @@
-all:	comp.pred comp.preds comp.spred
+LTHOME ?= $(HOME)/logontools
+SRC	= ja
+TGT	= en
+SG	= jacy
+TG	= erg
+
+#all:	comp.spred comp.pred comp.preds
+all:	comp.spred
 
 clean:
 	rm -f comp.*
@@ -12,10 +19,34 @@ comp.preds:	omrs/stamp.pred-all pmrs/stamp.updated
 comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -s > $@
 
-%/stamp.updated:	%/0/result
-	(cd $*; make stamp.updated);
+#smrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(SG)-parse.sh -l 3 -a $< | logon_cmd
 
-%/stamp.pred-all:	%/result
-	(cd $*; make stamp.pred-all);
+#tmrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(SRC)$(TGT)-transfer.sh -l 3 -a $< | logon_cmd
+
+#pmrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(SRC)$(TGT)-partial-transfer.sh -l 3 -a $< | logon_cmd
+
+#gmrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(SG)-generate.sh -l 3 -a $< | logon_cmd
+
+#omrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(SRC)$(TGT)-parse-object.sh -l 3 -a $< | logon_cmd
+
+#imrs:	$(wildcard ascii/*$(SRC)$(TGT))
+#	$(TG)-generate.sh -l 3 -a $< | logon_cmd
+
+pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs
+	cp $< $@
+
+%/Makefile:	$(LTHOME)/makefiles/Makefile.profile
+	cp $< $@
+
+%/stamp.updated:	%/Makefile %/0/result
+	make -C $* stamp.updated
+
+%/stamp.pred-all:	%/Makefile %/result
+	make -C $* stamp.pred-all
 
 .PHONY: clean all

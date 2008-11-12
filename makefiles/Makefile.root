@@ -1,30 +1,34 @@
-PRED=IWSLT06_JE_training-1000-06/comp.pred IWSLT06_JE_training-1000-07/comp.pred IWSLT06_JE_training-1000-08/comp.pred IWSLT06_JE_training-1000-09/comp.pred IWSLT06_JE_training-1000-10/comp.pred IWSLT06_JE_training-1000-11/comp.pred IWSLT06_JE_training-1000-12/comp.pred IWSLT06_JE_training-1000-13/comp.pred IWSLT06_JE_training-1000-14/comp.pred IWSLT06_JE_training-1000-15/comp.pred IWSLT06_JE_training-1000-16/comp.pred IWSLT06_JE_training-1000-17/comp.pred IWSLT06_JE_training-1000-18/comp.pred IWSLT06_JE_training-1000-19/comp.pred IWSLT06_JE_training-1000-20/comp.pred IWSLT06_JE_training-1000-21/comp.pred IWSLT06_JE_training-1000-22/comp.pred IWSLT06_JE_training-1000-23/comp.pred IWSLT06_JE_training-1000-24/comp.pred IWSLT06_JE_training-1000-25/comp.pred IWSLT06_JE_training-1000-26/comp.pred IWSLT06_JE_training-1000-27/comp.pred IWSLT06_JE_training-1000-28/comp.pred IWSLT06_JE_training-1000-29/comp.pred IWSLT06_JE_training-1000-30/comp.pred IWSLT06_JE_training-1000-31/comp.pred IWSLT06_JE_training-1000-32/comp.pred IWSLT06_JE_training-1000-33/comp.pred IWSLT06_JE_training-1000-34/comp.pred IWSLT06_JE_training-1000-35/comp.pred IWSLT06_JE_training-1000-36/comp.pred IWSLT06_JE_training-1000-37/comp.pred IWSLT06_JE_training-1000-38/comp.pred IWSLT06_JE_training-1000-39/comp.pred IWSLT06_JE_training-1000-40/comp.pred IWSLT06_JE_training-1000-41/comp.pred IWSLT06_JE_training-1000-42/comp.pred
+LTHOME	?= $(HOME)/logontools
+DIRS	= $(wildcard tc-*)
+PRED	= $(addsuffix /comp.pred,$(DIRS))
+PREDS	= $(addsuffix /comp.preds,$(DIRS))
+SPRED	= $(addsuffix /comp.spred,$(DIRS))
 
-PREDS=IWSLT06_JE_training-1000-06/comp.preds IWSLT06_JE_training-1000-07/comp.preds IWSLT06_JE_training-1000-08/comp.preds IWSLT06_JE_training-1000-09/comp.preds IWSLT06_JE_training-1000-10/comp.preds IWSLT06_JE_training-1000-11/comp.preds IWSLT06_JE_training-1000-12/comp.preds IWSLT06_JE_training-1000-13/comp.preds IWSLT06_JE_training-1000-14/comp.preds IWSLT06_JE_training-1000-15/comp.preds IWSLT06_JE_training-1000-16/comp.preds IWSLT06_JE_training-1000-17/comp.preds IWSLT06_JE_training-1000-18/comp.preds IWSLT06_JE_training-1000-19/comp.preds IWSLT06_JE_training-1000-20/comp.preds IWSLT06_JE_training-1000-21/comp.preds IWSLT06_JE_training-1000-22/comp.preds IWSLT06_JE_training-1000-23/comp.preds IWSLT06_JE_training-1000-24/comp.preds IWSLT06_JE_training-1000-25/comp.preds IWSLT06_JE_training-1000-26/comp.preds IWSLT06_JE_training-1000-27/comp.preds IWSLT06_JE_training-1000-28/comp.preds IWSLT06_JE_training-1000-29/comp.preds IWSLT06_JE_training-1000-30/comp.preds IWSLT06_JE_training-1000-31/comp.preds IWSLT06_JE_training-1000-32/comp.preds IWSLT06_JE_training-1000-33/comp.preds IWSLT06_JE_training-1000-34/comp.preds IWSLT06_JE_training-1000-35/comp.preds IWSLT06_JE_training-1000-36/comp.preds IWSLT06_JE_training-1000-37/comp.preds IWSLT06_JE_training-1000-38/comp.preds IWSLT06_JE_training-1000-39/comp.preds IWSLT06_JE_training-1000-40/comp.preds IWSLT06_JE_training-1000-41/comp.preds IWSLT06_JE_training-1000-42/comp.preds
-
-SPRED=IWSLT06_JE_training-1000-06/comp.spred IWSLT06_JE_training-1000-07/comp.spred IWSLT06_JE_training-1000-08/comp.spred IWSLT06_JE_training-1000-09/comp.spred IWSLT06_JE_training-1000-10/comp.spred IWSLT06_JE_training-1000-11/comp.spred IWSLT06_JE_training-1000-12/comp.spred IWSLT06_JE_training-1000-13/comp.spred IWSLT06_JE_training-1000-14/comp.spred IWSLT06_JE_training-1000-15/comp.spred IWSLT06_JE_training-1000-16/comp.spred IWSLT06_JE_training-1000-17/comp.spred IWSLT06_JE_training-1000-18/comp.spred IWSLT06_JE_training-1000-19/comp.spred IWSLT06_JE_training-1000-20/comp.spred IWSLT06_JE_training-1000-21/comp.spred IWSLT06_JE_training-1000-22/comp.spred IWSLT06_JE_training-1000-23/comp.spred IWSLT06_JE_training-1000-24/comp.spred IWSLT06_JE_training-1000-25/comp.spred IWSLT06_JE_training-1000-26/comp.spred IWSLT06_JE_training-1000-27/comp.spred IWSLT06_JE_training-1000-28/comp.spred IWSLT06_JE_training-1000-29/comp.spred IWSLT06_JE_training-1000-30/comp.spred IWSLT06_JE_training-1000-31/comp.spred IWSLT06_JE_training-1000-32/comp.spred IWSLT06_JE_training-1000-33/comp.spred IWSLT06_JE_training-1000-34/comp.spred IWSLT06_JE_training-1000-35/comp.spred IWSLT06_JE_training-1000-36/comp.spred IWSLT06_JE_training-1000-37/comp.spred IWSLT06_JE_training-1000-38/comp.spred IWSLT06_JE_training-1000-39/comp.spred IWSLT06_JE_training-1000-40/comp.spred IWSLT06_JE_training-1000-41/comp.spred IWSLT06_JE_training-1000-42/comp.spred
-
-all:	pairs.pred pairs.preds pairs.spred
+all:	pairs.spred pairs.pred pairs.preds
 
 clean:
 	rm -f pairs.*
 
 pairs.pred:	$(PRED)
-	(cat $(PRED) | comp2pairs > $@);
+	cat $(PRED) | comp2pairs > $@
 
 pairs.preds:	$(PREDS)
-	(cat $(PREDS) | comp2pairs > $@);
+	cat $(PREDS) | comp2pairs > $@
 
 pairs.spred:	$(SPRED)
-	(cat $(SPRED) | comp2pairs > $@);
+	cat $(SPRED) | comp2pairs > $@
 
-%/comp.pred:
-	(cd $* && make comp.pred)
+%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank
+	cp $< $@
 
-%/comp.spred:
-	(cd $* && make comp.spred)
+%/comp.pred:	%/Makefile
+	make -C $* comp.pred
 
-%/comp.preds:
-	(cd $* && make comp.preds)
+%/comp.spred:	%/Makefile
+	make -C $* comp.spred
+
+%/comp.preds:	%/Makefile
+	make -C $* comp.preds
 
 .PHONY:	clean all
+.SECONDARY:
