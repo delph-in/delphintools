@@ -1,0 +1,19 @@
+#!/bin/bash
+
+tab2tbl () {
+	awk '
+	BEGIN {
+		FS = "\t"
+		OFS = "\t& "
+		print "\\begin{tabular}{llrrrr} \\\\ \\hline"
+	}
+	{
+		print $1, $2, $3, $4, $5, $6 " \\\\"
+	}
+	END {
+		print "\\hline"
+		print "\\end{tabular}"
+	}'
+}
+
+tab2tbl

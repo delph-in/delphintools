@@ -1,0 +1,39 @@
+#!/bin/bash
+	
+tbl2tex () {
+	cat 2>&1 <<- TEX
+		%% -*- Mode: PDFLaTex; Coding: utf-8-unix -*-
+		\documentclass{article} 
+		
+		%%% Multi-column environments
+		\usepackage{multicol}
+		%%% Multi-column environments
+		
+		%%% Adobe's Times Roman font
+		\usepackage{times}
+		\usepackage{latexsym}
+		%%% Adobe's Times Roman font
+		
+		%%% Japanese IPA font
+		\usepackage{CJKutf8}
+		\newcommand{\ipam}[1]{\begin{CJK}{UTF8}{ipam}#1\end{CJK}}
+		\newcommand{\ipamp}[1]{\begin{CJK}{UTF8}{ipamp}#1\end{CJK}}
+		\newcommand{\ipag}[1]{\begin{CJK}{UTF8}{ipag}#1\end{CJK}}
+		\newcommand{\ipagp}[1]{\begin{CJK}{UTF8}{ipagp}#1\end{CJK}}
+		%%% Japanese IPA font
+	
+		\begin{document}
+		\begin{CJK}{UTF8}{ipamp}
+		
+	TEX
+	
+	cat
+	
+	cat <<- TEX
+	
+		\end{CJK}
+		\end{document}
+	TEX
+}
+	
+tbl2tex

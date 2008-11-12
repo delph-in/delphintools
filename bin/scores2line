@@ -1,0 +1,39 @@
+#!/bin/bash
+
+scores2line () {
+	d=$1
+	c=$2
+	s=$3
+	cat *.$d.$c.$s.*-bleu *.$d.$c.$s.sig *.$d.$c.$s.neva \
+		*.$d.$c.$s.nist *.$d.$c.$s.meteor  |
+	eval2score -n |
+	cut -f2 |
+	awk '
+	BEGIN {
+		RS = "\n\n"
+		FS = "\n"
+		OFS = "\t"
+		data = "'$d'"
+		case = "'$c'"
+		sys = "'$s'"
+	}
+	NF == 6 {
+		lbleu = $1
+		mbleu = $2
+		rbleu = $3
+		neva = $4
+		nist = $5
+		meteor = $6
+	
+		print data, case, sys, mbleu, neva, nist, meteor
+	}'
+}
+
+case "$#" in
+	3)
+		scores2line $*
+	;;
+	*)
+		echo 1>&2 "usage: scores2line <data> <case> <system>"
+	;;
+esac

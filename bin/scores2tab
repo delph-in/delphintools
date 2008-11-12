@@ -1,0 +1,14 @@
+#!/bin/bash
+
+scores2tab () {
+	echo 'DATA	CASE	SYSTEM	BLEU	NEVA	NIST	METEOR'
+	for d in $* ; do
+		for c in uc+detok lc+tok ; do
+			for s in base trans ; do
+				scores2line $d $c $s
+			done
+		done
+	done 2>/dev/null
+}
+
+scores2tab $*
