@@ -15,24 +15,24 @@ pred2comp() {
 
 	## sort and compare src and tgt file preds
 	## print preds unique to src and tgt into separate files	
-	rm -f *.tmp && touch src_diff.tmp tgt_diff.tmp
-	sort -u < $src | cut -f2 > src.tmp
-	sort -u < $tgt | cut -f2 > tgt.tmp
-	diff -y src.tmp tgt.tmp |
+	rm -f *.tmp.$$ && touch src_diff.tmp.$$ tgt_diff.tmp.$$
+	sort -u < $src | cut -f2 > src.tmp.$$
+	sort -u < $tgt | cut -f2 > tgt.tmp.$$
+	diff -y src.tmp.$$ tgt.tmp.$$ |
 	awk '
 	/</ {
-		print $1 > "src_diff.tmp"
+		print $1 > "src_diff.tmp.'$$'"
 	}
 	/>/ {
-		print $2> "tgt_diff.tmp"
+		print $2> "tgt_diff.tmp.'$$'"
 	}
 	/\|/ {
-		print $1 > "src_diff.tmp"
-		print $3 > "tgt_diff.tmp"
+		print $1 > "src_diff.tmp.'$$'"
+		print $3 > "tgt_diff.tmp.'$$'"
 	}
 	END {
-		close("src_diff.tmp")
-		close("tgt_diff.tmp")
+		close("src_diff.tmp.'$$'")
+		close("tgt_diff.tmp.'$$'")
 	}'
 
 	## get src and tgt sentence from corresponding profiles
@@ -48,11 +48,11 @@ pred2comp() {
 		# $src_sent	$tgt_sent
 		###################################################################
 	HEADER
-	paste src_diff.tmp tgt_diff.tmp
+	paste src_diff.tmp.$$ tgt_diff.tmp.$$
 	echo ""
 
 	## cleanup
-	rm -f *.tmp
+	rm -f *.tmp.$$
 }
 
 usage () {
