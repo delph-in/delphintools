@@ -6,4 +6,4 @@
 
 logon_get_args $*
 
-run_logon logon_generate $transfer $generate
+logon_generate $transfer $generate

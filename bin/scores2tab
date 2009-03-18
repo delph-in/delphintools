@@ -5,7 +5,8 @@ scores2tab () {
 	for d in $* ; do
 		for c in uc+detok lc+tok ; do
 			for s in base trans ; do
-				scores2line $d $c $s
+				scores2line *.$d.$c.$s.bleu *.$d.$c.$s.sig *.$d.$c.$s.neva \
+							*.$d.$c.$s.nist *.$d.$c.$s.meteor
 			done
 		done
 	done 2>/dev/null

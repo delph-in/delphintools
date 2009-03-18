@@ -19,15 +19,29 @@ TEST	= $(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-003.$(LDATE).fan \
 	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-004.$(LDATE).fan \
 	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-005.$(LDATE).fan
 
+TRAIN	= $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-006.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-007.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-008.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-009.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-010.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-011.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-012.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-013.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-014.$(LDATE).fan \
+	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-015.$(LDATE).fan
+
 all:	dev
 
 kill:
 	killall -9 alisp cheap logon
 
-dev:	$(DEV)
+dev:	$(DEV) $(LOGONTMP)
 	$(MAKE) -C $(LOGONTMP) $@
 
-test:	$(TEST)
+test:	$(TEST) $(LOGONTMP)
+	$(MAKE) -C $(LOGONTMP) $@
+
+train:	$(TRAIN) $(LOGONTMP)
 	$(MAKE) -C $(LOGONTMP) $@
 
 $(LOGONTMP):
@@ -38,6 +52,6 @@ $(LOGONTMP)/$(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%.txt \
 						$(HOME)/mosestools/makefiles/Makefile.evaluation
 	(rm -f $(HOME)/fans && ln -sf $(LOGONTMP) $(HOME)/fans && \
 	cp $(HOME)/Makefile.tc-eval $(LOGONTMP)/Makefile && \
-	$(LOGONROOT)/batch --$(SRC)$(TGT) --ascii $<)
+	$(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<)
 
 .PHONY:	all kill dev test
