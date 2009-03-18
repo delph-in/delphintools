@@ -5,7 +5,7 @@ mv $LOGONROOT/dfki/jacy.logon $LOGONROOT/dfki/jacy
 mv $LOGONROOT/lingo/erg $LOGONROOT/lingo/erg.new
 mv $LOGONROOT/lingo/erg.logon $LOGONROOT/lingo/erg
 
-cd $LOGONROOT && cvs update
+cd $LOGONROOT && cvs update -r HEAD
 
 mv $LOGONROOT/dfki/jacy $LOGONROOT/dfki/jacy.logon
 mv $LOGONROOT/dfki/jacy.new $LOGONROOT/dfki/jacy

@@ -1,4 +1,4 @@
-bin = xml2sxml sxml2dot
+bin = xml2sxml sxml2dot sxml2mtr
 
 all:										install
 
@@ -15,7 +15,7 @@ install:									$(bin)
 %.o:										%.scm
 	csc -O3 -c $*.scm
 
-%:											%.o
+%:										%.o
 	csc $? -o $@
 
-.PHONY:	all clean cleanall
+.PHONY:	all clean cleanall install

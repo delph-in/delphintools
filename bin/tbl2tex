@@ -21,16 +21,16 @@ tbl2tex () {
 		\newcommand{\ipag}[1]{\begin{CJK}{UTF8}{ipag}#1\end{CJK}}
 		\newcommand{\ipagp}[1]{\begin{CJK}{UTF8}{ipagp}#1\end{CJK}}
 		%%% Japanese IPA font
-	
+
 		\begin{document}
 		\begin{CJK}{UTF8}{ipamp}
-		
+
 	TEX
 	
 	cat
 	
 	cat <<- TEX
-	
+
 		\end{CJK}
 		\end{document}
 	TEX

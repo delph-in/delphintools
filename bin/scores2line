@@ -10,14 +10,14 @@ scores2line () {
 	cut -f2 |
 	awk '
 	BEGIN {
-		RS = "\n\n"
+		RS = "\r\n\r\n"
 		FS = "\n"
 		OFS = "\t"
 		data = "'$d'"
 		case = "'$c'"
 		sys = "'$s'"
 	}
-	NF == 6 {
+	NF >= 6 {
 		lbleu = $1
 		mbleu = $2
 		rbleu = $3

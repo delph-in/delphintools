@@ -1,4 +1,3 @@
-
 <mrs>
 <label vid='1'/><var vid='2'/>
 <ep><pred>PROP-OR-QUES_M_REL</pred><label vid='1'/>
@@ -26,7 +25,7 @@
 <extrapair><path>TENSE</path><value>UNTENSED</value></extrapair></var></fvpair>
 <fvpair><rargname>ARG1</rargname><var vid='10' sort='i'></var></fvpair>
 <fvpair><rargname>ARG2</rargname><var vid='9' sort='x'>
-    <extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
+<extrapair><path>PRONTYPE</path><value>STD_PRON</value></extrapair>
 <extrapair><path>GEND</path><value>N</value></extrapair>
 <extrapair><path>NUM</path><value>SG</value></extrapair>
 <extrapair><path>PERS</path><value>3</value></extrapair></var></fvpair>
