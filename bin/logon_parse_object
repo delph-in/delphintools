@@ -6,15 +6,16 @@ logon_parse_object () {
 	# we need to reverse the order of the ascii file to parse the target language.
 	# currently we keep only the first reference sentence so that the ids will align
 	# dump the reversed ascii to the ascii/ directory and set $skeleton to point to
-	# it so that the profile is created with target langauge sentences
-	if [ -n "$ascii" ]; then
-		cp -f $skeleton $TREEBANK/$name/ascii/
-		object_ascii=$TREEBANK/$name/ascii/$(basename $skeleton ".object")
-		objectify_ascii < $skeleton > $object_ascii
-		skeleton=$object_ascii
-	fi
+	# it so that the profile is created with target language sentences
 	
-	logon_setup_cpus
+	object_ascii="$TREEBANK/$name/ascii/$(basename $skeleton).object"
+	if [ ! -s "$object_ascii" ]; then
+		mkdir -p $TREEBANK/$name/ascii/
+#		cp -f $skeleton $TREEBANK/$name/ascii/
+		objectify_ascii < $skeleton > $object_ascii
+	fi
+	export skeleton=$object_ascii
+	
 	logon_setup_profile $object
 	cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$object/Makefile
 	
@@ -30,7 +31,9 @@ logon_parse_object () {
 	fi
 	
 	cat 2>&1 <<- OBJECT
-		(tsdb::tsdb :process "$object" :condition "i-wf=1")
+		(tsdb::tsdb :home "$TREEBANK/$object")
+		(tsdb::tsdb :list)
+		(tsdb::tsdb :process "." :condition "i-wf=1")
 	OBJECT
 }
 

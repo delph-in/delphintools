@@ -3,7 +3,6 @@
 # parse a profile and store mrs in <source>
 logon_parse () {
 	source=$1
-	logon_setup_cpus
 	logon_setup_profile $source
 	
 	cat 2>&1 <<- PARSE
@@ -18,7 +17,9 @@ logon_parse () {
 	fi
 	
 	cat 2>&1 <<- PARSE
-		(tsdb::tsdb :process "$source" :condition "i-wf=1")
+		(tsdb::tsdb :home "$TREEBANK/$source")
+		(tsdb::tsdb :list)
+		(tsdb::tsdb :process "." :condition "i-wf=1")
 	PARSE
 	
 	if [ -d $TREEBANK/$source ]; then
