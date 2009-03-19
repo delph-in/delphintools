@@ -2,30 +2,7 @@
 
 logon_setup_cpus () {
 	cat 2>&1 <<- CPUS
-		(setf tsdb::*pvm-cpus*
-			(list
-				(tsdb::make-cpu
-					:host (short-site-name)
-					:spawn "$LISPDIR/alisp"
-					:options (list "-I" "bclim.dxl" "-qq" "-locale" "$grammarlocale"
-								   "-L" "$grammarlisp")
-					:class :lkb :name "$grmname-lkb" :grammar "$grmname"
-					:task '(:parse :generate) :wait 300 :quantum 180)
-				(tsdb::make-cpu
-					:host (short-site-name)
-					:spawn "$LOGONROOT/bin/cheap"
-					:options (list "-tsdb" "-packing" "$grm")
-					:class :pet :name "$grmname-pet" :grammar "$grmname"
-					:task '(:parse) :wait 300 :quantum 180)
-				(tsdb::make-cpu
-					:host (short-site-name)
-					:spawn "$LOGONROOT/bin/cheap"
-					:options (list "-tsdb" "-packing" "-tok=yy" "-default-les"
-						"$grm")
-					:class :lex :name "$grmname-lex" :grammar "$grmname"
-					:preprocessor "$petpreprocessor"
-					:task '(:parse) :wait 300 :quantum 180)
-			))
+		(load "$LTHOME/env/dot.tsdbrc")
 		(tsdb::tsdb :cpu :list)
 	CPUS
 }

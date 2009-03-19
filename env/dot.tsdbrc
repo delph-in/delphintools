@@ -1,0 +1,505 @@
+;;; Hey, Emacs, this file is -*- Common-Lisp -*- ... got that?
+
+(in-package :tsdb)
+
+(setf *tsdb-cache-connections-p* t)
+
+(setf *pvm-encoding* :utf-8)
+
+(let* ((root (getenv "LOGONROOT"))
+       (root (namestring (parse-namestring root))))
+
+  (unless (probe-file root)
+    (error
+     "Global environment variable `LOGONROOT' not set; check `~/.bashrc'"))
+
+  ;;
+  ;; point to Norwegian skeletons, rather than the default English ones
+  ;;
+  (tsdb 
+   :skeleton
+   (format nil "~a/lingo/lkb/src/tsdb/skeletons/norsk" root))
+  ;;
+  ;; define [incr tsdb()] clients in terms of binary to run, command-line
+  ;; arguments, and the host to run on; if the default of `(short-site-name)'
+  ;; for the current host does not work for you, then contact me for advice.
+  ;;                                                         (17-dec-03; oe)
+  ;;
+  (let ((norgram "NorGram (1-feb-08)")
+        (erg "LinGO (21-jul-08)")
+        (terg "ERG (trunk)")
+        (gg "GG (mar-2008)")
+        (jacy "Jacy (2009-03-18)")
+        (srg "SRG (0903)")
+        (wrapper (format nil "~a/bin/logon" root))
+        (options '(#-:runtime-standard "--source" 
+                   #+:runtime-standard "--binary"
+                   "--tty"))
+        (binary (format nil "~a/franz/~a/alisp" root mk::%system-binaries%))
+        (base 
+         (format nil "~a/franz/~a/base.dxl" root mk::%system-binaries%))
+        (cheap (format nil "~a/bin/cheap" root))
+        (tnt
+         (format nil "~a/bin/tnt -z100 ~a/coli/tnt/models/wsj -" root root))
+        (ace (format nil "~a/bin/ace" root))
+        (wait 300)
+        (quantum 180))
+    (setf *pvm-cpus*
+      (list
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" "xle" "-qq" "-locale" "no_NO.UTF-8"
+                        "-L" (format nil "~a/uib/client.lisp" root)))
+        :class :norgram :grammar norgram :name "xle" 
+        :task '(:parse) :template "norgram/%t/%d/xle"
+        :wait wait :quantum (* 2 quantum))
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                        "-L" (format nil "~a/lingo/noen.lisp" root)))
+        :class :noen :name "noen" :grammar "NoEn (25-nov-08)" 
+        :task '(:transfer) :template "%s/%t/%d"
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/erg.lisp" root)))
+        :class :erg :grammar erg :task '(:parse :generate)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append
+                  options
+                  (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                        "-L" (format nil "~a/lingo/logon.lisp" root)))
+        :class '(:logon :no2en) :name "logon" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 7200)
+       ;;
+       ;; a few non-LOGON MT systems, some of them on-line web interfaces
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/lingo/smt.lisp" root))
+        :class :smt :name "smt" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 120)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/lingo/oa.lisp" root))
+        :class :oa :name "oa" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 120)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/lingo/visl.lisp" root))
+        :class :visl :name "visl" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 120)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/lingo/google.lisp" root))
+        :class :google :name "google" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 120)
+       ;;
+       ;; next, our Japanese -- English baby MT system
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-packing" "-mrs"
+                       (format nil "~a/dfki/jacy/japanese.grm" root))
+        :class '(:jacy :jacy@pet) :name "pet" :grammar jacy
+        :task '(:parse) :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-yy" "-packing" "-mrs"
+                       (format nil "~a/dfki/jacy/japanese.grm" root))
+        :preprocessor "tsdb::chasen-for-pet"
+        :class :jacy+chasen :name "pet" :grammar jacy
+        :task '(:parse) :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "ja_JP.UTF-8" 
+                        "-L" (format nil "~a/dfki/jacy.lisp" root)))
+        :class '(:jacy@lkb) :name "lkb" :grammar jacy
+        :task '(:parse :generate) :wait (* wait 2) :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "ja_JP.UTF-8" 
+                        "-L" (format nil "~a/dfki/jacy.lisp" root)))
+        :class ':jacy :name "lkb" :grammar jacy
+        :task '(:generate) :wait (* wait 2) :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "ja_JP.UTF-8"
+                        "-L" (format nil "~a/lingo/jaen.lisp" root)))
+        :class :jaen :name "jaen" :grammar "JaEn (nov-08)" 
+        :task '(:transfer)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/enja.lisp" root)))
+        :class :enja :name "enja" :grammar "EnJa (current)" 
+        :task '(:transfer)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "ja_JP.UTF-8"
+                        "-L" (format nil "~a/lingo/ja2en.lisp" root)))
+        :class :ja2en :name "ja2en" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 7200)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "ja_JP.UTF-8"
+                        "-L" (format
+                              nil
+                              "~a/lingo/ja2en+chasen.lisp"
+                              root)))
+        :class :ja2en+chasen :name "ja2en" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 7200)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/en2ja.lisp" root)))
+        :class :en2ja :name "en2ja" :task '(:translate)
+        :template "%s/%t/%d" :wait wait :quantum 7200)
+       ;;
+       ;; another baby MT pair: German -- English
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "de_DE.UTF-8" 
+                        "-L" (format nil "~a/dfki/gg.lisp" root)))
+        :class :gg :name "lkb" :grammar gg
+        :task '(:parse :generate) :wait 600 :quantum quantum)
+       (make-cpu 
+	:host (short-site-name)
+	:spawn cheap
+	:options (list "-tsdb" "-yy" "-packing" "-mrs" "-qc-unif=40"  
+                       (format nil "~a/dfki/gg/german.grm" root))
+        :preprocessor "lkb::preprocess-for-pet"
+	:class :gg@pet :task '(:parse) :name "pet" :grammar gg 
+	:wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "de_DE.UTF-8"
+                        "-L" (format nil "~a/lingo/deen.lisp" root)))
+        :class :deen :name "lkb" :grammar "DeEn (nov-2008)" 
+        :task '(:transfer) :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "de_DE.UTF-8"
+                        "-L" (format nil "~a/lingo/de2en.lisp" root)))
+        :class :de2en :name "de2en" :task '(:translate)
+        :template "%s/%t/%d" :wait 900 :quantum 7200)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/ende.lisp" root)))
+        :class :ende :name "lkb" :grammar "EnDe (28-jun-06)" 
+        :task '(:transfer) :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/en2de.lisp" root)))
+        :class :en2de :name "en2de" :task '(:translate)
+        :template "%s/%t/%d" :wait 900 :quantum 7200)
+       ;;
+       ;; the Spanish Resource Grammar, interesting due to its use of SPPP
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing=0" "-default-les"
+                       (format nil "~a/upf/srg/srg.grm" root))
+        :preprocessor "lkb::sppp-for-pet" :edges 50000
+        :class :srg :grammar srg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       ;;
+       ;; from here on, convenience cpu definitions for developers
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-yy" "-packing"
+                       (format nil "~a/lingo/erg/english.grm" root))
+        :preprocessor "lkb::repp-for-pet"
+        :reader "tsdb::yy-read-input"
+        :class :cheap :grammar erg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-yy" "-packing" "-default-les"
+                       (format nil "~a/lingo/erg/english.grm" root))
+        :preprocessor "lkb::repp-for-pet"
+        :tagger (list :tnt tnt :n 2)
+        :reader "tsdb::yy-read-input"
+        :class :erg+tnt :grammar erg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn wrapper
+        :options (append 
+                  options
+                  (list "-I" base "-qq" "-locale" "en_US.UTF-8"
+                        "-L" (format nil "~a/lingo/terg.lisp" root)))
+        :class :terg :grammar terg :task '(:generate)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all"
+                       (format nil "~a/lingo/terg/english.grm" root))
+        :preprocessor '("lkb::repp-for-pet"
+                        :repp :tokenizer :calls (:xml :ascii :latex))
+        :reader "tsdb::yy-read-input"
+        :class :terg :grammar terg :name "pet"
+        :task '(:parse) :flags '(:generics nil)
+        :wait wait :quantum quantum)
+
+       ;;; dan's terg definition
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing" "-mrs"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all"
+                       (format nil "~a/lingo/terg/english.grm" root))
+        :preprocessor '("lkb::repp-for-pet"
+                        :repp :tokenizer :calls (:xml :ascii :latex))
+        :tagger (list :tnt tnt :n 2)
+        :reader "tsdb::yy-read-input"
+        :class :terg+mrs :grammar terg :name "pet"
+        :task '(:parse)  :flags '(:generics t)
+        :wait wait :quantum quantum)
+
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all"
+                       (format nil "~a/lingo/terg/english.grm" root))
+        :preprocessor '("lkb::repp-for-pet"
+                        :repp :tokenizer :calls (:xml :ascii :latex))
+        :tagger (list :tnt tnt :n 2)
+        :reader "tsdb::yy-read-input"
+        :class :terg+tnt :grammar terg :name "pet"
+        :task '(:parse)  :flags '(:generics t)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all"
+                       (format nil "~a/lingo/terg/english.grm" root))
+        :preprocessor '("lkb::repp-for-pet"
+                        :repp :tokenizer :calls (:xml :ascii :wiki))
+        :tagger (list :tnt tnt :n 2)
+        :reader "tsdb::yy-read-input"
+        :class :wiki :grammar terg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all"
+                       (format nil "~a/lingo/terg/conll.grm" root))
+        :preprocessor "tsdb::ptb-for-pet"
+        :reader "tsdb::yy-read-input"
+        :class :ptb :grammar terg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-t" "-tsdb" "-yy" "-packing=31"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all" "-robust=1"
+                       (format nil "~a/lingo/terg/english.grm" root))
+        :preprocessor '("lkb::repp-for-pet"
+                        :repp :tokenizer :calls (:xml :ascii :latex))
+        :reader "tsdb::yy-read-input"
+        :class :pcfg :grammar terg :name "pet"
+        :task '(:parse) :flags '(:generics nil)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn ace
+        :options (list "-g" (format nil "~a/lingo/erg/erg.ace" root) "-t")
+        :class :ape :grammar erg :name "ape" :task '(:parse) :wait wait)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn ace
+        :options (list "-g" (format nil "~a/lingo/erg/erg.ace" root)
+                       "-e" "-t")
+        :preprocessor "tsdb::answer-enrich-mrs"
+        :class :age :grammar erg :name "ape" :task '(:generate) :wait wait)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn (format nil "~a/lingo/lkb/src/tsdb/capi/client" root)
+        :options (list "-qq")
+        :class :test :wait wait)
+       ;;
+       ;; `deep' parsing for use in the CoNLL 2009 shared task
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "--conll" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all" #-:null "-mrs=rmrx"
+                       (format nil "~a/lingo/terg/conll.grm" root))
+        :preprocessor '("tsdb::conll-for-pet" :gold nil)
+        :reader "tsdb::yy-read-input"
+        :class :conll :grammar terg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "--conll" "-tsdb" "-yy" "-packing=31"
+                       "-memlimit=1024" "-timeout=60"
+                       "-chart-mapping" "-default-les=all" "-robust=1"
+                       (format nil "~a/lingo/terg/conll.grm" root))
+        :preprocessor '("tsdb::conll-for-pet" :gold nil)
+        :reader "tsdb::yy-read-input"
+        :class :conll+pcfg :grammar terg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "--conll" "-tsdb" "-yy" "-packing" "-qc-unif=40"
+                       "-memlimit=1024" "-timeout=60"
+                       "-default-les" "-chart-mapping" #-:null "-mrs=rmrx"
+                       (format nil "~a/dfki/gg/conll.grm" root))
+        :preprocessor '("tsdb::conll-for-pet" :gold nil)
+        :reader "tsdb::yy-read-input"
+        :class :gg@conll :grammar gg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu
+        :host (short-site-name)
+        :spawn cheap 
+        :options (list "--conll" "-tsdb" "-yy" "-packing"
+                       "-memlimit=1024" "-timeout=60"
+                       "-default-les" "-chart-mapping" #-:null "-mrs=rmrx"
+                       (format nil "~a/dfki/jacy/conll.grm" root))
+        :preprocessor '("tsdb::conll-for-pet" :gold nil :mode :jacy)
+        :reader "tsdb::yy-read-input"
+        :class :jacy@conll :grammar jacy :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap :edges 50000
+        :options (list "--conll" "-tsdb" "-yy" "-packing=0"
+                       "-memlimit=1024" "-timeout=60"
+                       "-default-les" #+:null "-mrs=rmrx"
+                       (format nil "~a/upf/srg/srg.grm" root))
+        :preprocessor '("tsdb::conll-for-pet" :gold nil :mode :srg)
+        :reader "tsdb::yy-read-input"
+        :class :srg@conll :grammar srg :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       ;;
+       ;; a group of external, early adopters: Norwegian -- Japanese at NTNU
+       ;; 
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8" 
+                       "-L" 
+		       (format nil 
+			       "~a/ntnu/norsource/lkb/norsource.lisp" 
+			       root))
+        :class :norsource :name "norsource" :grammar "NorSource"
+        :task '(:parse) :wait wait :quantum quantum)  
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/ntnu/noja/lkb/noja.lisp" root))
+        :class :noja :name "noja" :task '(:transfer)
+        :template "%s/%t/%d" :wait wait)
+       (make-cpu 
+        :host (short-site-name)
+        :spawn binary
+        :options (list "-I" base "-qq" "-locale" "no_NO.UTF-8"
+                       "-L" (format nil "~a/ntnu/noja/lkb/no2ja.lisp" root))
+        :class :no2ja :name "no2ja" :task '(:translate)
+        :template "%s/%t/%d" :wait wait)
+       ;;
+       ;; the UW Wambaya grammar (not yet publicly available)
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-packing"
+                       (format nil "~a/uw/wmb/wambaya-pet.grm" root))
+        :class :wmb :grammar "Wambaya (1-aug-08)" :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)
+       ;;
+       ;; the CST grammar of Danish, not (yet) open-source
+       ;;
+       (make-cpu 
+        :host (short-site-name)
+        :spawn cheap
+        :options (list "-tsdb" "-yy" "-packing" "-default-les"
+                       (format nil "~a/cst/danish/danish.grm" root))
+        :preprocessor "lkb::cst-for-pet" :edges 50000
+        :class :cst :grammar "CST (27-apr-08)" :name "pet" :task '(:parse)
+        :wait wait :quantum quantum)))))
