@@ -11,6 +11,7 @@ logon_partial_transfer () {
 	cat 2>&1 <<- PARTIAL
 		(setf tsdb::*tsdb-transfer-include-fragments-p* t)
 		(lkb::read-script-file-aux "$transferscript")
+                (setf tsdb::*tsdb-semantix-hook* "lkb::get-dict-triple")
 	PARTIAL
 	
 	if [ -n "$edges" ]; then
