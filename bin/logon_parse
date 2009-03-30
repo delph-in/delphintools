@@ -17,15 +17,15 @@ logon_parse () {
 	fi
 	
 	cat 2>&1 <<- PARSE
-		(tsdb::tsdb :home "$TREEBANK/$source")
+		(tsdb::tsdb :home "$name")
 		(tsdb::tsdb :list)
-		(tsdb::tsdb :process "." :condition "i-wf=1")
+		(tsdb::tsdb :process "smrs" :condition "i-wf=1")
 	PARSE
 	
-	if [ -d $TREEBANK/$source ]; then
-		cp -f $LTHOME/makefiles/Makefile.treebank $TREEBANK/$name/Makefile
-		cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$source/Makefile
-	fi
+#	if [ -d $TREEBANK/$source ]; then
+#		cp -f $LTHOME/makefiles/Makefile.treebank $TREEBANK/$name/Makefile
+#		cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$source/Makefile
+#	fi
 }
 
 logon_parse $*

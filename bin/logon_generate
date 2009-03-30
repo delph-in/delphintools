@@ -9,6 +9,8 @@ logon_generate () {
 	cat 2>&1 <<- GENERATE
 		(lkb::read-script-file-aux "$grammarscript")
 		(lkb::index-for-generator)
+		(tsdb::tsdb :home "$TREEBANK/$name")
+		(tsdb::tsdb :list)
 	GENERATE
 	
 	if [ -n "$limit" ]; then
@@ -21,10 +23,10 @@ logon_generate () {
 			do
 				logon_setup_profile $generate/$i/$m
 				cat 2>&1 <<- GENERATE
-					(tsdb::tsdb-do-process "$generate/$i/$j"
+					(tsdb::tsdb-do-process "gmrs/$i/$j"
 					  :condition "result-id=$j"
 	                  :type :generate :overwrite t
-	                  :gold "$transfer/$i")
+	                  :gold "tmrs/$i")
 				GENERATE
 				j=`expr $j + 1`
 			done

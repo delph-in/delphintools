@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# generate from a profile and store results in <generate>
+# generate from a profile and store results in <iikae>
 # assumes <source> exists with mrs parse results
 logon_generate_source () {
 	source=$1
@@ -9,6 +9,8 @@ logon_generate_source () {
 	cat 2>&1 <<- GENERATE
 		(lkb::read-script-file-aux "$grammarscript")
 		(lkb::index-for-generator)
+		(tsdb::tsdb :home "$TREEBANK/$name")
+		(tsdb::tsdb :list)
 	GENERATE
 	
 	if [ -n "$limit" ]; then
@@ -16,12 +18,12 @@ logon_generate_source () {
 		j=0
 		while [ $j -lt $limit ];
 		do
-			logon_setup_profile $generate/$j
+			logon_setup_profile $name/imrs/$j
 			cat 2>&1 <<- GENERATE
-				(tsdb::tsdb-do-process "$generate/$j"
+				(tsdb::tsdb-do-process "imrs/$j"
 				  :condition "result-id=$j"
 	                          :type :generate :overwrite t
-	                          :gold "$source")
+	                          :gold "smrs")
 			GENERATE
 			j=`expr $j + 1`
 		done

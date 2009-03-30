@@ -4,6 +4,11 @@
 . $LTHOME/env/jacy.env
 . $LTHOME/bin/logon-utils.sh
 
-logon_get_args $*
+jaen_transfer () {
+	logon_setup
+	logon_transfer $source $transfer
+	logon_shutdown
+}
 
-run_logon logon_transfer $source $transfer
+logon_get_args $*
+jaen_transfer

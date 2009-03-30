@@ -5,11 +5,11 @@
 logon_transfer () {
 	source=$1
 	transfer=$2
-	logon_setup_profile $source
-	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$transfer/Makefile
 	
 	cat 2>&1 <<- TRANSFER
 		(lkb::read-script-file-aux "$transferscript")
+		(tsdb::tsdb :home "$TREEBANK/$name")
+		(tsdb::tsdb :list)
 	TRANSFER
 
 	if [ -n "$edges" ]; then
@@ -20,18 +20,21 @@ logon_transfer () {
 		fi
 	fi
 
+	logon_setup_profile smrs
+	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$source/Makefile
+
 	if [ -n "$limit" ]; then	
 		n=0
 		while [ $n -lt $limit ]; do
-			logon_setup_profile $transfer/$n
+			logon_setup_profile tmrs/$n
 			cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$transfer/$n/Makefile
 			cat 2>&1 <<- TRANSFER
-				(tsdb::tsdb-do-process "$transfer/$n"
+				(tsdb::tsdb-do-process "tmrs/$n"
 									   :condition "result-id=$n"
 									   :type
 									   :transfer
 									   :overwrite t
-									   :gold "$source")
+									   :gold "smrs")
 			TRANSFER
 			n=`expr $n + 1`
 		done

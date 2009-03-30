@@ -4,6 +4,11 @@
 . $LTHOME/env/erg.env
 . $LTHOME/bin/logon-utils.sh
 
-logon_get_args $*
+jaen_generate () {
+	logon_setup
+	logon_generate $transfer $generate
+	logon_shutdown
+}
 
-logon_generate $transfer $generate
+logon_get_args $*
+jaen_generate

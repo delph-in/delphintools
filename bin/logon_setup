@@ -23,10 +23,10 @@ logon_setup () {
 		(tsdb::initialize-tsdb nil :rc "$LTHOME/env/dot.tsdbrc")
 		(tsdb::tsdb :skeleton "$skeletondir")
 		;;; try setting treebank inside of the tight loops
-		(tsdb::tsdb :home "$TREEBANK")
+;		(tsdb::tsdb :home "$TREEBANK")
 ;		(tsdb::tsdb :list)
 		(setf tsdb::*tsdb-exhaustive-p* nil)
-		(setf tsdb::*tsdb-semantix-hook* "mrs::get-mrs-string")
+;		(setf tsdb::*tsdb-semantix-hook* "mrs::get-mrs-string")
 		(setf tsdb::*tsdb-write-mrs-p* t)
 	SETTINGS
 	

@@ -31,9 +31,9 @@ logon_parse_object () {
 	fi
 	
 	cat 2>&1 <<- OBJECT
-		(tsdb::tsdb :home "$TREEBANK/$object")
+		(tsdb::tsdb :home "$TREEBANK/$name")
 		(tsdb::tsdb :list)
-		(tsdb::tsdb :process "." :condition "i-wf=1")
+		(tsdb::tsdb :process "omrs" :condition "i-wf=1")
 	OBJECT
 }
 

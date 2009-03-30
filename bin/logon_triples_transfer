@@ -5,12 +5,17 @@
 logon_partial_transfer () {
 	source=$1
 	partial=$2
-	logon_setup_profile $source
-	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$partial/Makefile
+#	logon_setup_profile smrs
+#	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$partial/Makefile
 	
 	cat 2>&1 <<- PARTIAL
 		(setf tsdb::*tsdb-transfer-include-fragments-p* t)
 		(lkb::read-script-file-aux "$transferscript")
+		(defun mrs::get-mrs-string (edge) 
+			(format nil "~A"
+				(mrs::ed-convert-psoa (mrs::extract-mrs edge))))
+		(tsdb::tsdb :home "$name")
+		(tsdb::tsdb :list)
 	PARTIAL
 	
 	if [ -n "$edges" ]; then
@@ -24,15 +29,15 @@ logon_partial_transfer () {
 	if [ -n "$limit" ]; then
 		n=0
 		while [ $n -lt $limit ]; do
-			logon_setup_profile $partial/$n
-			cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$partial/$n/Makefile
+#			logon_setup_profile tmrs/$n
+#			cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$partial/$n/Makefile
 			cat 2>&1 <<- PARTIAL
-				(tsdb::tsdb-do-process "$partial/$n"
+				(tsdb::tsdb-do-process "tmrs/$n"
 									   :condition "result-id=$n"
 									   :type
 									   :transfer
 									   :overwrite t
-									   :gold "$source")
+									   :gold "smrs")
 			PARTIAL
 			n=`expr $n + 1`
 		done

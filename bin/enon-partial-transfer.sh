@@ -16,8 +16,18 @@
 
 . $LTHOME/env/logon.env
 . $LTHOME/env/enon.env
-. $LTHOME/bin/logon-utils.sh
+# . $LTHOME/bin/logon-utils.sh
 
-logon_get_args $*
+enon_partial_transfer () {
+	logon_setup
+	logon_triples_transfer $*
+	logon_shutdown
+}
 
-run_logon "logon_partial_transfer $source $partial"
+name=$1
+if [ "${name#/}" = "$name" ]; then 
+	name=$PWD/$name
+fi
+export name
+
+enon_partial_transfer $*
