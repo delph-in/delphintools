@@ -1,0 +1,24 @@
+/path/to/profile/ascii/original
+				/ascii/object
+				/smrs/
+				/tmrs/0/
+				/tmrs/1/
+				/tmrs/2/
+				/gmrs/0/0/
+				/gmrs/0/1/
+				/gmrs/0/2/
+				/gmrs/1/0/
+				/omrs/
+				/pmrs/0/
+				/pmrs/1/
+				/pmrs/2/
+				/imrs/
+				/nmrs/
+
+smrs: MRS from parsing source language
+tmrs: MRS from applying transfer grammar to smrs
+gmrs: MRS from applying generation grammar to tmrs
+omrs: MRS from parsing "object" (i.e. target) language
+pmrs: "partial transfer" results -- MRS containing source rels that were untranslatable in addition to translated rels
+imrs: "iikae" (i.e. paraphrasing) MRS -- paraphrases of smrs
+nmrs: oNtology MRS
