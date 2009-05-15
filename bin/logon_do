@@ -116,9 +116,10 @@ if [ -z "$1" ]; then
 	usage
 	exit 1
 elif [ "${1#/}" = "$1" ]; then 
-	1=$PWD/$1
+	profile_top=$PWD/$1
+else
+	profile_top=$1
 fi
-profile_dir=$1
 
 # make logon lisp commands. copy bitext file to $profile_top/bitext/original if it doesn't exist.
 if [ -n "$debug" ]; then
