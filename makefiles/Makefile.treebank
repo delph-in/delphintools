@@ -17,10 +17,10 @@ comp.preds:	omrs/stamp.pred-all pmrs/stamp.updated
 comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -s > $@
 
-pmrs/Makefile:	pmrs $(LTHOME)/makefiles/Makefile.pmrs
+pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
 	cp $< $@
 
-%/Makefile:	% $(LTHOME)/makefiles/Makefile.profile
+%mrs/Makefile:	% $(LTHOME)/makefiles/Makefile.profile %mrs
 	cp $< $@
 
 %/stamp.updated:	%/Makefile %/0/result
@@ -29,7 +29,22 @@ pmrs/Makefile:	pmrs $(LTHOME)/makefiles/Makefile.pmrs
 %/stamp.pred-all:	%/Makefile %/result
 	make -C $* stamp.pred-all
 
-%:	bitext/original bitext/object
-	logon_do -g $(SRC)$(TGT) -t $@
+smrs:	bitext/original bitext/object
+	logon_do -g $(SRC)$(TGT) -t $@ .
+
+tmrs:	bitext/original bitext/object smrs
+	logon_do -g $(SRC)$(TGT) -t $@ .
+
+pmrs:	bitext/original bitext/object smrs
+	logon_do -g $(SRC)$(TGT) -t $@ .
+
+gmrs:	bitext/original bitext/object tmrs
+	logon_do -g $(SRC)$(TGT) -t $@ .
+
+omrs:	bitext/original bitext/object
+	logon_do -g $(SRC)$(TGT) -t $@ .
+
+imrs:	bitext/original bitext/object
+	logon_do -g $(SRC)$(TGT) -t $@ .
 
 .PHONY: clean all
