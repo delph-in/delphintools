@@ -1,8 +1,9 @@
-LTHOME	?= $(HOME)/logontools
-DIRS	= $(wildcard tc-*)
-PRED	= $(addsuffix /comp.pred,$(DIRS))
-PREDS	= $(addsuffix /comp.preds,$(DIRS))
-SPRED	= $(addsuffix /comp.spred,$(DIRS))
+LTHOME		?= $(HOME)/logontools
+TCDIR		 = $(HOME)/research/data/parallel/tanaka/bitext/train/sub
+PROFILES	 = $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
+PRED		 = $(addsuffix /comp.pred,$(PROFILES))
+PREDS		 = $(addsuffix /comp.preds,$(PROFILES))
+SPRED		 = $(addsuffix /comp.spred,$(PROFILES))
 
 all:	pairs.spred pairs.pred pairs.preds
 
@@ -18,7 +19,10 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank
+tc-jaen-%:	$(TCDIR)/tanaka-train-jaen-%.txt
+	logon_do -b $< $@
+
+%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank %
 	cp $< $@
 
 %/comp.pred:	%/Makefile
