@@ -19,11 +19,11 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
-tc-jaen-%:	$(TCDIR)/tanaka-train-jaen-%.txt
-	logon_do -b $< $@
+tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
+	logon_do -b $^ tc-jaen-$*
 
-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank %
-	cp $< $@
+tc-jaen-%:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
+	cp $< $@/Makefile
 
 %/comp.pred:	%/Makefile
 	make -C $* comp.pred

@@ -29,22 +29,22 @@ pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
 %/stamp.pred-all:	%/Makefile %/result
 	make -C $* stamp.pred-all
 
-smrs:	bitext/original bitext/object
+smrs:	bitext/original
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
-tmrs:	bitext/original bitext/object smrs
+tmrs:	bitext/original smrs
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
-pmrs:	bitext/original bitext/object smrs
+pmrs:	bitext/original smrs
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
-gmrs:	bitext/original bitext/object tmrs
+gmrs:	bitext/original tmrs
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
-omrs:	bitext/original bitext/object
+omrs:	bitext/object
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
-imrs:	bitext/original bitext/object
+imrs:	bitext/original
 	logon_do -g $(SRC)$(TGT) -t $@ .
 
 .PHONY: clean all
