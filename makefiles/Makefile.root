@@ -4,8 +4,10 @@ PROFILES	 = $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
 PRED		 = $(addsuffix /comp.pred,$(PROFILES))
 PREDS		 = $(addsuffix /comp.preds,$(PROFILES))
 SPRED		 = $(addsuffix /comp.spred,$(PROFILES))
+GMRS		 = $(addsuffix /gmrs,$(PROFILES))
 
-all:	pairs.spred pairs.pred pairs.preds
+#all:	pairs.spred pairs.pred pairs.preds
+all:	mrs
 
 clean:
 	rm -f pairs.*
@@ -19,11 +21,13 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
+mrs:	$(GMRS)
+
 tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
 	logon_do -b $^ tc-jaen-$*
 
-tc-jaen-%:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
-	cp $< $@/Makefile
+tc-jaen-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
+	cp $< $@
 
 %/comp.pred:	%/Makefile
 	make -C $* comp.pred
@@ -34,5 +38,8 @@ tc-jaen-%:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
 %/comp.preds:	%/Makefile
 	make -C $* comp.preds
 
-.PHONY:	clean all
+%/gmrs:	%/Makefile
+	make -C $* gmrs
+
+.PHONY:	clean all mrs
 .SECONDARY:

@@ -20,13 +20,13 @@ comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
 pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
 	cp $< $@
 
-%mrs/Makefile:	% $(LTHOME)/makefiles/Makefile.profile %mrs
+%mrs/Makefile:	$(LTHOME)/makefiles/Makefile.profile %mrs
 	cp $< $@
 
-%/stamp.updated:	%/Makefile %/0/result
+%/stamp.updated:	%/Makefile %
 	make -C $* stamp.updated
 
-%/stamp.pred-all:	%/Makefile %/result
+%/stamp.pred-all:	%/Makefile %
 	make -C $* stamp.pred-all
 
 smrs:	bitext/original
