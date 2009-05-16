@@ -133,5 +133,5 @@ elif [ -n "$bitext" ]; then
 	usage
 	exit 1
 elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" ]; then
-	make_lisp | DISPLAY="" logon
+	make_lisp | DISPLAY="" LUI="" logon
 fi
