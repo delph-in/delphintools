@@ -1,16 +1,22 @@
 #!/bin/bash
 
+setf_vars () {
+	for v in $vars; do
+		if [[ "${!v}" =~ [A-Za-z] ]]; then
+			echo "(setf $v \"${!v}\")"
+		elif [ -n "${!v}" ]; then
+			echo "(setf $v ${!v})"
+		fi
+	done
+}
+
 make_lisp_dbg () {
 	# cat each before lisp file for debugging purposes
 	for l in $blisp; do
 		cat $l
 	done
 	# make a setf for each env var we care about
-	for v in $vars; do
-		if [ -n "${!v}" ]; then
-			echo "(setf $v \"${!v}\")"
-		fi
-	done
+	setf_vars
 	# cat each after lisp file for debugging purposes
 	for l in $alisp; do
 		cat $l
@@ -23,11 +29,7 @@ make_lisp () {
 		echo "(load \"$l\")"
 	done
 	# make a setf for each env var we care about
-	for v in $vars; do
-		if [ -n "${!v}" ]; then
-			echo "(setf $v \"${!v}\")"
-		fi
-	done
+	setf_vars
 	# load after lisp files
 	for l in $alisp; do
 		echo "(load \"$l\")"
@@ -57,7 +59,7 @@ objectify () {
 }
 
 usage () {
-	echo "usage: logon_do [-b|--bitext] [-c|--count] [-d|--debug] [-e|--edges n] [-l|--limit n] [-s|--settings s.lisp] -g|--grammar <jaen> -t|--task <smrs|tmrs|gmrs|omrs|imrs> <bitext|profile-top>"
+	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen> -t|--task <smrs|tmrs|gmrs|omrs|imrs> <profile-top>"
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
