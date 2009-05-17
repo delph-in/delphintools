@@ -5,12 +5,20 @@ PRED		 = $(addsuffix /comp.pred,$(PROFILES))
 PREDS		 = $(addsuffix /comp.preds,$(PROFILES))
 SPRED		 = $(addsuffix /comp.spred,$(PROFILES))
 GMRS		 = $(addsuffix /gmrs,$(PROFILES))
+OMRS		 = $(addsuffix /omrs,$(PROFILES))
+PMRS		 = $(addsuffix /pmrs,$(PROFILES))
 
 #all:	pairs.spred pairs.pred pairs.preds
 all:	mrs
 
 clean:
 	rm -f pairs.*
+
+cleanall:	clean
+	rm -rf $(PROFILES)
+
+kill:
+	killall -9 logon alisp cheap tsdb lkb yzlui pvmd3
 
 pairs.pred:	$(PRED)
 	cat $(PRED) | comp2pairs > $@
@@ -21,7 +29,7 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
-mrs:	$(GMRS)
+mrs:	$(GMRS) $(OMRS) $(PMRS)
 
 tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
 	logon_do -b $^ tc-jaen-$*
@@ -38,8 +46,23 @@ tc-jaen-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
 %/comp.preds:	%/Makefile
 	make -C $* comp.preds
 
+%/smrs:	%/Makefile
+	make -C $* smrs
+
+%/omrs:	%/Makefile
+	make -C $* omrs
+
+%/tmrs:	%/Makefile
+	make -C $* tmrs
+
+%/pmrs:	%/Makefile
+	make -C $* pmrs
+
 %/gmrs:	%/Makefile
 	make -C $* gmrs
 
-.PHONY:	clean all mrs
+%/imrs:	%/Makefile
+	make -C $* imrs
+
+.PHONY: all clean cleanall kill mrs
 .SECONDARY:

@@ -1,12 +1,34 @@
 LTHOME ?= $(HOME)/logontools
 SRC	= ja
 TGT	= en
+JACY = $(LOGONROOT)/dfki/jacy/japanese.grm \
+       $(LOGONROOT)/dfki/jacy/lex/Jacy.rev \
+       $(LOGONROOT)/dfki/jacy/lex/tanaka-unknowns.rev \
+       $(LOGONROOT)/dfki/jacy/lkb/script
+ERG = $(LOGONROOT)/lingo/terg/english.grm \
+      $(LOGONROOT)/lingo/terg/lexdb.rev \
+      $(LOGONROOT)/lingo/terg/lkb/script
+JAEN = $(wildcard $(LOGONROOT)/uio/jaen/*.mtr) \
+       $(wildcard $(LOGONROOT)/uio/jaen/*.tdl) \
+       $(wildcard $(LOGONROOT)/uio/*.tdl) \
+       $(LOGONROOT)/uio/jaen/lkb/script
+
+LIMIT = 3
+SRESULT = smrs/result
+ORESULT = omrs/result
+TRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),tmrs/$(n)/result)
+PRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),pmrs/$(n)/result)
+GRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),$(foreach m,$(shell seq -w 1 $(LIMIT)),tmrs/$(n)/$(m)/result))
+IRESULT = imrs/result
 
 #all:	comp.spred comp.pred comp.preds
 all:	comp.spred
 
 clean:
 	rm -f comp.*
+	
+cleanall:	clean
+	rm -rf *mrs
 
 comp.pred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -p > $@
@@ -29,22 +51,29 @@ pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
 %/stamp.pred-all:	%/Makefile %
 	make -C $* stamp.pred-all
 
-smrs:	bitext/original
-	logon_do -g $(SRC)$(TGT) -t $@ .
+smrs:	$(SRESULT)
+omrs:	$(ORESULT)
+tmrs:	$(TRESULT)
+pmrs:	$(PRESULT)
+gmrs:	$(GRESULT)
+imrs:	$(IRESULT)
 
-tmrs:	bitext/original smrs
-	logon_do -g $(SRC)$(TGT) -t $@ .
+$(SRESULT):	bitext/original $(JACY)
+	logon_do -g $(SRC)$(TGT) -t smrs -l $(LIMIT) .
+	
+$(ORESULT):	bitext/object $(ERG)
+	logon_do -g $(SRC)$(TGT) -t omrs -l $(LIMIT) .
 
-pmrs:	bitext/original smrs
-	logon_do -g $(SRC)$(TGT) -t $@ .
+$(TRESULT):	bitext/original $(SRESULT) $(JAEN)
+	logon_do -g $(SRC)$(TGT) -t tmrs -l $(LIMIT) .
 
-gmrs:	bitext/original tmrs
-	logon_do -g $(SRC)$(TGT) -t $@ .
+$(PRESULT):	bitext/original $(SRESULT) $(JAEN)
+	logon_do -g $(SRC)$(TGT) -t pmrs -l $(LIMIT) .
 
-omrs:	bitext/object
-	logon_do -g $(SRC)$(TGT) -t $@ .
+$(GRESULT):	bitext/original $(TRESULT) $(ERG)
+	logon_do -g $(SRC)$(TGT) -t gmrs -l $(LIMIT) .
 
-imrs:	bitext/original
-	logon_do -g $(SRC)$(TGT) -t $@ .
+$(IRESULT):	bitext/original $(SRESULT) $(JACY)
+	logon_do -g $(SRC)$(TGT) -t imrs -l $(LIMIT) .
 
-.PHONY: clean all
+.PHONY: clean all %mrs
