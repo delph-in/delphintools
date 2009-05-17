@@ -18,7 +18,9 @@ cleanall:	clean
 	rm -rf $(PROFILES)
 
 kill:
-	killall -9 logon alisp cheap tsdb lkb yzlui pvmd3
+	killall -9 logon alisp cheap tsdb lkb yzlui pvmd3; \
+	rm -f /tmp/*.debug.$(user); \
+	rm -f /tmp/.pvm.*.$(user)*
 
 pairs.pred:	$(PRED)
 	cat $(PRED) | comp2pairs > $@
@@ -29,7 +31,8 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
-mrs:	$(GMRS) $(OMRS) $(PMRS)
+#mrs:	$(GMRS) $(OMRS) $(PMRS)
+mrs:	$(GMRS)
 
 tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
 	logon_do -b $^ tc-jaen-$*

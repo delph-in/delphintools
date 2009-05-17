@@ -22,7 +22,9 @@ GRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),$(foreach m,$(shell seq -w 1 $(
 IRESULT = imrs/result
 
 #all:	comp.spred comp.pred comp.preds
-all:	comp.spred
+#all:	comp.spred
+
+all:	gmrs
 
 clean:
 	rm -f comp.*
