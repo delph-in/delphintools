@@ -28,7 +28,7 @@ all:	gmrs
 
 clean:
 	rm -f comp.*
-	
+
 cleanall:	clean
 	rm -rf *mrs
 
@@ -53,29 +53,29 @@ pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
 %/stamp.pred-all:	%/Makefile %
 	make -C $* stamp.pred-all
 
-smrs:	$(SRESULT)
-omrs:	$(ORESULT)
-tmrs:	$(TRESULT)
-pmrs:	$(PRESULT)
-gmrs:	$(GRESULT)
-imrs:	$(IRESULT)
+smrs:	smrs.stamp
+omrs:	omrs.stamp
+tmrs:	tmrs.stamp
+pmrs:	pmrs.stamp
+gmrs:	gmrs.stamp
+imrs:	imrs.stamp
 
-$(SRESULT):	bitext/original $(JACY)
-	logon_do -g $(SRC)$(TGT) -t smrs -l $(LIMIT) .
-	
-$(ORESULT):	bitext/object $(ERG)
-	logon_do -g $(SRC)$(TGT) -t omrs -l $(LIMIT) .
+smrs.stamp:	bitext/original $(JACY)
+	logon_do -g $(SRC)$(TGT) -t smrs -l $(LIMIT) . && touch $@
 
-$(TRESULT):	bitext/original $(SRESULT) $(JAEN)
-	logon_do -g $(SRC)$(TGT) -t tmrs -l $(LIMIT) .
+omrs.stamp:	bitext/object $(ERG)
+	logon_do -g $(SRC)$(TGT) -t omrs -l $(LIMIT) . && touch $@
 
-$(PRESULT):	bitext/original $(SRESULT) $(JAEN)
-	logon_do -g $(SRC)$(TGT) -t pmrs -l $(LIMIT) .
+tmrs.stamp:	bitext/original smrs.stamp $(JAEN)
+	logon_do -g $(SRC)$(TGT) -t tmrs -l $(LIMIT) . && touch $@
 
-$(GRESULT):	bitext/original $(TRESULT) $(ERG)
-	logon_do -g $(SRC)$(TGT) -t gmrs -l $(LIMIT) .
+pmrs.stamp:	bitext/original smrs.stamp $(JAEN)
+	logon_do -g $(SRC)$(TGT) -t pmrs -l $(LIMIT) . && touch $@
 
-$(IRESULT):	bitext/original $(SRESULT) $(JACY)
-	logon_do -g $(SRC)$(TGT) -t imrs -l $(LIMIT) .
+gmrs.stamp:	bitext/original tmrs.stamp $(ERG)
+	logon_do -g $(SRC)$(TGT) -t gmrs -l $(LIMIT) . && touch $@
+
+imrs.stamp:	bitext/original smrs.stamp $(JACY)
+	logon_do -g $(SRC)$(TGT) -t imrs -l $(LIMIT) . && touch $@
 
 .PHONY: clean all %mrs
