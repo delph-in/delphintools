@@ -59,7 +59,7 @@ objectify () {
 }
 
 usage () {
-	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen> -t|--task <smrs|tmrs|gmrs|omrs|imrs> <profile-top>"
+	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen> -t|--task <smrs|tmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
@@ -67,41 +67,41 @@ settings=$LTHOME/lisp/settings.lisp
 
 while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 	case $1 in
-		-b|--bitext)
-			bitext=$2
-			shift 2
+	    -b|--bitext)
+		bitext=$2
+		shift 2
 		;;
 	    -c|--count)
       		count=$2
       		shift 2
-      	;;
-      	-d|--debug)
-			debug=true
-			shift 1
+      		;;
+      	    -d|--debug)
+		debug=true
+		shift 1
 		;;
-		-e|--edges)
-			edges=$2
-			shift 2
+	    -e|--edges)
+		edges=$2
+		shift 2
 		;;
-    	-g|--grammar)
+    	    -g|--grammar)
       		grammar=$2
       		shift 2
 		;;
-    	-l|--limit)
+    	    -l|--limit)
       		limit=$2
       		shift 2
 		;;
-		-s|--settings)
-			settings=$2
-			shift 2
+	    -s|--settings)
+		settings=$2
+		shift 2
 		;;
-		-t|--task)
-			task=$2
-			shift 2
+	    -t|--task)
+		task=$2
+		shift 2
 		;;
-		*)
-			usage
-			exit 1
+	    *)
+		usage
+		exit 1
 	esac
 done
 
@@ -109,18 +109,17 @@ done
 vars="profile_top count edges limit"
 
 # lisp loaded before initializing user-defined vars
-blisp="$LTHOME/lisp/startup.lisp $LTHOME/lisp/$grammar.$task.lisp $settings"
+blisp="$LTHOME/lisp/startup.lisp $LTHOME/lisp/$grammar/$task.lisp $settings"
 # lisp loaded after initializing user-defined vars
-alisp="$LTHOME/lisp/$task.lisp $LTHOME/lisp/shutdown.lisp"
+alisp="$LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
 
 # make sure there is an argument left that points to an absolute path
 if [ -z "$1" ]; then
-	usage
-	exit 1
+    profile_top=$PWD
 elif [ "${1#/}" = "$1" ]; then 
-	profile_top=$PWD/$1
+    profile_top=$PWD/$1
 else
-	profile_top=$1
+    profile_top=$1
 fi
 
 # make logon lisp commands. copy bitext file to $profile_top/bitext/original if it doesn't exist.
