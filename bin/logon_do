@@ -59,7 +59,7 @@ objectify () {
 }
 
 usage () {
-	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen> -t|--task <smrs|tmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
+	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
@@ -124,15 +124,18 @@ fi
 
 # make logon lisp commands. copy bitext file to $profile_top/bitext/original if it doesn't exist.
 if [ -n "$debug" ]; then
-	make_lisp_dbg
+    make_lisp_dbg
 elif [ -s "$bitext" ]; then
-	mkdir -p $profile_top/bitext/ && \
+    mkdir -p $profile_top/bitext/ && \
 	cp -r $bitext $profile_top/bitext/original && \
 	objectify < $profile_top/bitext/original > $profile_top/bitext/object
 elif [ -n "$bitext" ]; then
-	echo 1>&2 "Bitext file '$file' doesn't exist!"
-	usage
-	exit 1
-elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" ]; then
-	make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
+    echo 1>&2 "Bitext file '$file' doesn't exist!"
+    usage
+    exit 1
+elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$LTHOME/lisp/$grammar/$task.lisp" ]; then
+    make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
+else
+    usage
+    exit 1
 fi
