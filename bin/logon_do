@@ -109,7 +109,7 @@ done
 vars="profile_top count edges limit"
 
 # lisp loaded before initializing user-defined vars
-blisp="$LTHOME/lisp/startup.lisp $LTHOME/lisp/$grammar/$task.lisp $settings"
+blisp="$LTHOME/lisp/startup.lisp $settings $LTHOME/lisp/$grammar/$task.lisp"
 # lisp loaded after initializing user-defined vars
 alisp="$LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
 
