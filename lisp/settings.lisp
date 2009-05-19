@@ -1,4 +1,5 @@
 (setf limit 3)
+(setf count 1)
 (setf tsdb::*tsdb-maximal-number-of-analyses* limit)
 (setf tsdb::*tsdb-maximal-number-of-results* limit)
 (set (intern "*MAXIMUM-NUMBER-OF-EDGES*" :lkb) 100000)
