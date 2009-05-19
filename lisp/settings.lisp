@@ -1,4 +1,3 @@
-;;; settings for parse iterations, edges, etc.
 (setf limit 3)
 (setf tsdb::*tsdb-maximal-number-of-analyses* limit)
 (setf tsdb::*tsdb-maximal-number-of-results* limit)

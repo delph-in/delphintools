@@ -1,10 +1,6 @@
-;;; include partial transfers
 (setf tsdb::*tsdb-transfer-include-fragments-p* t)
-;;; set and read treebank dir
 (tsdb::tsdb :home profile_top)
 (tsdb::tsdb :list)
-;;; check if profile exists and create if necessary
-;(tsdb:tsdb :create "smrs" :skeleton "test")
 (loop for n from 0 below limit do
   (let ((dir (format nil "pmrs/~a" n)))
     (if (not (tsdb::verify-tsdb-directory dir :absolute nil))
