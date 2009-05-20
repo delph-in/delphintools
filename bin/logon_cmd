@@ -1,9 +1,0 @@
-#!/bin/bash
-
-. $LTHOME/env/logon.env
-
-logon_cmd () {
-	$LOGONROOT/bin/logon -I base $*
-}
-
-logon_cmd $*

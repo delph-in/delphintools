@@ -1,0 +1,141 @@
+#!/bin/bash
+
+setf_vars () {
+	for v in $vars; do
+		if [[ "${!v}" =~ [A-Za-z] ]]; then
+			echo "(setf $v \"${!v}\")"
+		elif [ -n "${!v}" ]; then
+			echo "(setf $v ${!v})"
+		fi
+	done
+}
+
+make_lisp_dbg () {
+	# cat each before lisp file for debugging purposes
+	for l in $blisp; do
+		cat $l
+	done
+	# make a setf for each env var we care about
+	setf_vars
+	# cat each after lisp file for debugging purposes
+	for l in $alisp; do
+		cat $l
+	done
+}
+
+make_lisp () {
+	# load before lisp files
+	for l in $blisp; do
+		echo "(load \"$l\")"
+	done
+	# make a setf for each env var we care about
+	setf_vars
+	# load after lisp files
+	for l in $alisp; do
+		echo "(load \"$l\")"
+	done
+}
+
+objectify () {
+	awk '
+	BEGIN {
+		FS=OFS="\n"
+		RS=ORS=""
+	}
+	{
+                if (match($1, /^(\[[0-9]+\] +)(.+)(;;[^;]+)$/, ids)) {
+                        num = ids[1]
+                        src = ids[2]
+                        tid = ids[3]
+		        tgt = num $2 tid
+                }
+                else {
+                        src = $1
+                        tgt = $2
+                }
+
+		print tgt, src, "\n"
+	}'
+}
+
+usage () {
+	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
+}
+
+TREEBANK=${TREEBANK:=$HOME/treebank}
+settings=$LTHOME/lisp/settings.lisp
+
+while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
+	case $1 in
+	    -b|--bitext)
+		bitext=$2
+		shift 2
+		;;
+	    -c|--count)
+      		count=$2
+      		shift 2
+      		;;
+      	    -d|--debug)
+		debug=true
+		shift 1
+		;;
+	    -e|--edges)
+		edges=$2
+		shift 2
+		;;
+    	    -g|--grammar)
+      		grammar=$2
+      		shift 2
+		;;
+    	    -l|--limit)
+      		limit=$2
+      		shift 2
+		;;
+	    -s|--settings)
+		settings=$2
+		shift 2
+		;;
+	    -t|--task)
+		task=$2
+		shift 2
+		;;
+	    *)
+		usage
+		exit 1
+	esac
+done
+
+# vars that we allow the user to define
+vars="profile_top count edges limit"
+
+# lisp loaded before initializing user-defined vars
+blisp="$LTHOME/lisp/startup.lisp $settings $LTHOME/lisp/$grammar/$task.lisp"
+# lisp loaded after initializing user-defined vars
+alisp="$LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
+
+# make sure there is an argument left that points to an absolute path
+if [ -z "$1" ]; then
+    profile_top=$PWD
+elif [ "${1#/}" = "$1" ]; then 
+    profile_top=$PWD/$1
+else
+    profile_top=$1
+fi
+
+# make logon lisp commands. copy bitext file to $profile_top/bitext/original if it doesn't exist.
+if [ -n "$debug" ]; then
+    make_lisp_dbg
+elif [ -s "$bitext" ]; then
+    mkdir -p $profile_top/bitext/ && \
+	cp -r $bitext $profile_top/bitext/original && \
+	objectify < $profile_top/bitext/original > $profile_top/bitext/object
+elif [ -n "$bitext" ]; then
+    echo 1>&2 "Bitext file '$file' doesn't exist!"
+    usage
+    exit 1
+elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$LTHOME/lisp/$grammar/$task.lisp" ]; then
+    make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
+else
+    usage
+    exit 1
+fi

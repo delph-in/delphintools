@@ -1,13 +1,26 @@
-LTHOME	?= $(HOME)/logontools
-DIRS	= $(wildcard tc-*)
-PRED	= $(addsuffix /comp.pred,$(DIRS))
-PREDS	= $(addsuffix /comp.preds,$(DIRS))
-SPRED	= $(addsuffix /comp.spred,$(DIRS))
+LTHOME		?= $(HOME)/logontools
+TCDIR		 = $(HOME)/research/data/parallel/tanaka/bitext/train/sub
+PROFILES	 = $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
+PRED		 = $(addsuffix /comp.pred,$(PROFILES))
+PREDS		 = $(addsuffix /comp.preds,$(PROFILES))
+SPRED		 = $(addsuffix /comp.spred,$(PROFILES))
+GMRS		 = $(addsuffix /gmrs,$(PROFILES))
+OMRS		 = $(addsuffix /omrs,$(PROFILES))
+PMRS		 = $(addsuffix /pmrs,$(PROFILES))
 
-all:	pairs.spred pairs.pred pairs.preds
+#all:	pairs.spred pairs.pred pairs.preds
+all:	mrs
 
 clean:
 	rm -f pairs.*
+
+cleanall:	clean
+	rm -rf $(PROFILES)
+
+kill:
+	killall -9 logon alisp cheap tsdb lkb yzlui pvmd3; \
+	rm -f /tmp/*.debug.$(user); \
+	rm -f /tmp/.pvm.*.$(user)*
 
 pairs.pred:	$(PRED)
 	cat $(PRED) | comp2pairs > $@
@@ -18,7 +31,13 @@ pairs.preds:	$(PREDS)
 pairs.spred:	$(SPRED)
 	cat $(SPRED) | comp2pairs > $@
 
-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank
+#mrs:	$(GMRS) $(OMRS) $(PMRS)
+mrs:	$(GMRS)
+
+tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
+	logon_do -b $^ tc-jaen-$*
+
+tc-jaen-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
 	cp $< $@
 
 %/comp.pred:	%/Makefile
@@ -30,5 +49,23 @@ pairs.spred:	$(SPRED)
 %/comp.preds:	%/Makefile
 	make -C $* comp.preds
 
-.PHONY:	clean all
+%/smrs:	%/Makefile
+	make -C $* smrs
+
+%/omrs:	%/Makefile
+	make -C $* omrs
+
+%/tmrs:	%/Makefile
+	make -C $* tmrs
+
+%/pmrs:	%/Makefile
+	make -C $* pmrs
+
+%/gmrs:	%/Makefile
+	make -C $* gmrs
+
+%/imrs:	%/Makefile
+	make -C $* imrs
+
+.PHONY: all clean cleanall kill mrs
 .SECONDARY:

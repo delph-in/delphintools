@@ -1,0 +1,37 @@
+#!/bin/bash
+
+lisp="startup.lisp settings.lisp jacy.p.lisp parse.lisp shutdown.lisp"
+
+parse_dbg () {
+	cat <<- LISP
+(setf profile-top "$profile_top")
+	LISP
+	for f in $lisp; do
+		cat $f
+	done
+}
+
+parse () {
+	cat <<- LISP
+(setf profile-top "$profile_top")
+	LISP
+	for f in $lisp; do
+		echo "(load \"$f\")"
+	done
+}
+
+profile_top=$1
+bitext="$HOME/test.txt"
+
+debug="true"
+if [ -n "$debug" ]; then
+	parse_dbg
+elif [ -s "$profile_top/ascii/original" ]; then
+	parse | DISPLAY="" logon
+elif [ -s "$bitext" ]; then
+	mkdir -p $profile_top/ascii/ && cp -r $bitext $profile_top/ascii/original
+	parse | DISPLAY="" logon
+else
+	echo 1&>2 "Bitext file '$bitext' doesn't exist!"
+	exit 1
+fi

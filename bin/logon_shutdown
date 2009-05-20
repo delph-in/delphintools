@@ -1,9 +1,0 @@
-#!/bin/bash
-
-logon_shutdown () {
-	cat 2>&1 <<- SHUTDOWN
-		(excl:exit)
-	SHUTDOWN
-}
-
-logon_shutdown
