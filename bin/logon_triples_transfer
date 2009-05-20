@@ -11,11 +11,15 @@ logon_partial_transfer () {
 	cat 2>&1 <<- PARTIAL
 		(setf tsdb::*tsdb-transfer-include-fragments-p* t)
 		(lkb::read-script-file-aux "$transferscript")
+<<<<<<< local
+                (setf tsdb::*tsdb-semantix-hook* "lkb::get-dict-triple")
+=======
 		(defun mrs::get-mrs-string (edge) 
 			(format nil "~A"
 				(mrs::ed-convert-psoa (mrs::extract-mrs edge))))
 		(tsdb::tsdb :home "$name")
 		(tsdb::tsdb :list)
+>>>>>>> other
 	PARTIAL
 	
 	if [ -n "$edges" ]; then
