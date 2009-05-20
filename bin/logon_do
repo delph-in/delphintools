@@ -63,7 +63,7 @@ usage () {
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
-settings=$LTHOME/lisp/settings.lisp
+settings=$LTHOME/lisp/settings/default.lisp
 
 while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 	case $1 in
@@ -109,9 +109,9 @@ done
 vars="profile_top count edges limit"
 
 # lisp loaded before initializing user-defined vars
-blisp="$LTHOME/lisp/startup.lisp $settings $LTHOME/lisp/$grammar/$task.lisp"
+blisp="$LTHOME/lisp/startup.lisp $settings"
 # lisp loaded after initializing user-defined vars
-alisp="$LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
+alisp="$LTHOME/lisp/$grammar/$task.lisp $LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
 
 # make sure there is an argument left that points to an absolute path
 if [ -z "$1" ]; then
