@@ -7,12 +7,12 @@ INSTALLATION
 
 * Via mercurial
 
-$ hg pull 'http://cl.naist.jp/~eric-n/hg/logontools' /path/to/logontools
+$ hg pull 'http://cl.naist.jp/~eric-n/hg/delphintools' /path/to/delphintools
 
 * Via tarball
 
-$ wget 'http://cl.naist.jp/~eric-n/hg/logontools/archive/tip.tar.gz' -O /path/to/logontools.tgz
-$ cd /path/to/ && tar -zxvf logontools.tgz
+$ wget 'http://cl.naist.jp/~eric-n/hg/delphintools/archive/tip.tar.gz' -O /path/to/delphintools.tgz
+$ cd /path/to/ && tar -zxvf delphintools.tgz
 
 -----------------------
 SHELL ENVIRONMENT SETUP
@@ -21,16 +21,16 @@ SHELL ENVIRONMENT SETUP
 Add the following to your .bashrc
 
 # Batch processing with Delphin
-LTHOME=/path/to/logontools
-if [ -f $LTHOME/setup.sh ]; then
-	. $LTHOME/setup.sh
+DTHOME=/path/to/delphintools
+if [ -f $DTHOME/setup.sh ]; then
+	. $DTHOME/setup.sh
 fi
 
 ------------------------
 AUTOMATION WITH LOGON_DO
 ------------------------
 
-logontools/bin/logon_do provides a simple interface for parsing, tranlating, and generating using the LOGON binary. It automatically creates a collection of profiles from a bitext-formatted input file.
+delphintools/bin/logon_do provides a simple interface for parsing, tranlating, and generating using the LOGON binary. It automatically creates a collection of profiles from a bitext-formatted input file.
 
 ----------------------
 CREATING A PROFILE TOP

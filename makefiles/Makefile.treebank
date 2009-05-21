@@ -1,4 +1,4 @@
-LTHOME ?= $(HOME)/logontools
+DTHOME ?= $(HOME)/delphintools
 SRC	= ja
 TGT	= en
 JACY = $(LOGONROOT)/dfki/jacy/japanese.grm \
@@ -41,10 +41,10 @@ comp.preds:	omrs/stamp.pred-all pmrs/stamp.updated
 comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -s > $@
 
-pmrs/Makefile:	$(LTHOME)/makefiles/Makefile.pmrs pmrs
+pmrs/Makefile:	$(DTHOME)/makefiles/Makefile.pmrs pmrs
 	cp $< $@
 
-%mrs/Makefile:	$(LTHOME)/makefiles/Makefile.profile %mrs
+%mrs/Makefile:	$(DTHOME)/makefiles/Makefile.profile %mrs
 	cp $< $@
 
 %/stamp.updated:	%/Makefile %

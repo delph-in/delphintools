@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $LTHOME/env/logon.env
+. $DTHOME/env/logon.env
 
 file-mrx2mrs () {
 	cat 2>&1 <<- LISP

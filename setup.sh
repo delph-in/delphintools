@@ -6,6 +6,6 @@ if [ `uname` = Darwin ]; then
 	OS=MacOSX
 fi
 
-PATH=$LTHOME/bin/$OS:$LTHOME/bin/$OS/$ARCH:$LTHOME/bin:$PATH
-export ARCH LTHOME OS PATH
-. $LTHOME/env/$OS.env
+PATH=$DTHOME/bin/$OS:$DTHOME/bin/$OS/$ARCH:$DTHOME/bin:$PATH
+export ARCH DTHOME OS PATH
+. $DTHOME/env/$OS.env

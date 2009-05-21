@@ -1,8 +1,8 @@
 #!/bin/bash
 
-. $LTHOME/env/logon.env
-. $LTHOME/env/erg.env
-#. $LTHOME/bin/logon-utils.sh
+. $DTHOME/env/logon.env
+. $DTHOME/env/erg.env
+#. $DTHOME/bin/logon-utils.sh
 
 erg_parse () {
 	logon_setup

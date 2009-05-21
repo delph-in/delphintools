@@ -1,4 +1,4 @@
-LTHOME ?= $(HOME)/logontools
+DTHOME ?= $(HOME)/delphintools
 STAMPS=0/stamp.pred-all 1/stamp.pred-all 2/stamp.pred-all
 
 all:	stamp.updated
@@ -9,7 +9,7 @@ clean:
 stamp.updated:	$(STAMPS)
 	touch $@
 
-%/Makefile:	$(LTHOME)/makefiles/Makefile.profile
+%/Makefile:	$(DTHOME)/makefiles/Makefile.profile
 	cp $< $@
 
 %/stamp.pred-all:	%/Makefile

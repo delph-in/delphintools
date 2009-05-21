@@ -1,4 +1,4 @@
-LTHOME		?= $(HOME)/logontools
+DTHOME		?= $(HOME)/delphintools
 TCDIR		 = $(HOME)/research/data/parallel/tanaka/bitext/train/sub
 PROFILES	 = $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
 PRED		 = $(addsuffix /comp.pred,$(PROFILES))
@@ -37,7 +37,7 @@ mrs:	$(GMRS)
 tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
 	logon_do -b $^ tc-jaen-$*
 
-tc-jaen-%/Makefile:	$(LTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
+tc-jaen-%/Makefile:	$(DTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
 	cp $< $@
 
 %/comp.pred:	%/Makefile

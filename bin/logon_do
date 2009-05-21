@@ -63,7 +63,7 @@ usage () {
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
-settings=$LTHOME/lisp/settings/default.lisp
+settings=$DTHOME/lisp/settings/default.lisp
 
 while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 	case $1 in
@@ -109,9 +109,9 @@ done
 vars="profile_top count edges limit"
 
 # lisp loaded before initializing user-defined vars
-blisp="$LTHOME/lisp/startup.lisp $settings"
+blisp="$DTHOME/lisp/startup.lisp $settings"
 # lisp loaded after initializing user-defined vars
-alisp="$LTHOME/lisp/$grammar/$task.lisp $LTHOME/lisp/common/$task.lisp $LTHOME/lisp/shutdown.lisp"
+alisp="$DTHOME/lisp/$grammar/$task.lisp $DTHOME/lisp/common/$task.lisp $DTHOME/lisp/shutdown.lisp"
 
 # make sure there is an argument left that points to an absolute path
 if [ -z "$1" ]; then
@@ -133,7 +133,7 @@ elif [ -n "$bitext" ]; then
     echo 1>&2 "Bitext file '$bitext' doesn't exist!"
     usage
     exit 1
-elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$LTHOME/lisp/$grammar/$task.lisp" ]; then
+elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
     make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
 else
     usage

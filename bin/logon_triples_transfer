@@ -6,7 +6,7 @@ logon_partial_transfer () {
 	source=$1
 	partial=$2
 #	logon_setup_profile smrs
-#	cp -f $LTHOME/makefiles/Makefile.pmrs $TREEBANK/$partial/Makefile
+#	cp -f $DTHOME/makefiles/Makefile.pmrs $TREEBANK/$partial/Makefile
 	
 	cat 2>&1 <<- PARTIAL
 		(setf tsdb::*tsdb-transfer-include-fragments-p* t)
@@ -34,7 +34,7 @@ logon_partial_transfer () {
 		n=0
 		while [ $n -lt $limit ]; do
 #			logon_setup_profile tmrs/$n
-#			cp -f $LTHOME/makefiles/Makefile.profile $TREEBANK/$partial/$n/Makefile
+#			cp -f $DTHOME/makefiles/Makefile.profile $TREEBANK/$partial/$n/Makefile
 			cat 2>&1 <<- PARTIAL
 				(tsdb::tsdb-do-process "tmrs/$n"
 									   :condition "result-id=$n"
