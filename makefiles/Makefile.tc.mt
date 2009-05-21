@@ -1,4 +1,4 @@
-#!/usr/bin/make -r
+#!/usr/bin/make
 
 DTHOME	?= $(HOME)/delphintools
 SRC		= ja
@@ -31,7 +31,7 @@ TRAIN	= $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-006.$(LDATE).fan \
 	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-014.$(LDATE).fan \
 	  $(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-015.$(LDATE).fan
 
-all:	dev
+all:	dev test
 
 kill:
 	killall -9 alisp cheap logon
