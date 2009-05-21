@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-DTHOME		?= $(HOME)/delphintool
+DTHOME		?= $(HOME)/delphintools
 tcdir		:= $(HOME)/research/data/parallel/tanaka/bitext/train/sub
 src			:= ja
 tgt			:= en
