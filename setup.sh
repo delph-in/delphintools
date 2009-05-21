@@ -1,7 +1,5 @@
 #!/bin/bash
 
-LTHOME=`dirname $0`
-
 ARCH=`uname -m`
 OS=`uname`
 if [ `uname` = Darwin ]; then
