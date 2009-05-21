@@ -1,0 +1,15 @@
+#!/usr/bin/make
+
+DTHOME		?= $(HOME)/delphintool
+tcdir		:= $(HOME)/research/data/parallel/tanaka/bitext/train/sub
+src			:= ja
+tgt			:= en
+
+include $(DTHOME)/makefiles/Makefile.root
+
+tc-jaen-%/bitext:	$(tcdir)/tanaka-train-jaen-%.txt
+	logon_do -b $< tc-jaen-$*
+
+tc-jaen-%/Makefile:	$(DTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext Makefile.lang
+	cp $< $@
+
