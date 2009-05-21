@@ -1,12 +1,15 @@
-DTHOME		?= $(HOME)/delphintools
-TCDIR		 = $(HOME)/research/data/parallel/tanaka/bitext/train/sub
-PROFILES	 = $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
-PRED		 = $(addsuffix /comp.pred,$(PROFILES))
-PREDS		 = $(addsuffix /comp.preds,$(PROFILES))
-SPRED		 = $(addsuffix /comp.spred,$(PROFILES))
-GMRS		 = $(addsuffix /gmrs,$(PROFILES))
-OMRS		 = $(addsuffix /omrs,$(PROFILES))
-PMRS		 = $(addsuffix /pmrs,$(PROFILES))
+#!/usr/bin/make
+
+PRED	:= $(addsuffix /comp.pred,$(PROFILES))
+PREDS	:= $(addsuffix /comp.preds,$(PROFILES))
+SPRED	:= $(addsuffix /comp.spred,$(PROFILES))
+SMRS	:= $(addsuffix /smrs,$(PROFILES))
+TMRS	:= $(addsuffix /tmrs,$(PROFILES))
+PMRS	:= $(addsuffix /pmrs,$(PROFILES))
+GMRS	:= $(addsuffix /gmrs,$(PROFILES))
+VMRS	:= $(addsuffix /vmrs,$(PROFILES))
+OMRS	:= $(addsuffix /omrs,$(PROFILES))
+IMRS	:= $(addsuffix /imrs,$(PROFILES))
 
 #all:	pairs.spred pairs.pred pairs.preds
 all:	mrs
@@ -22,38 +25,17 @@ kill:
 	rm -f /tmp/*.debug.$(user); \
 	rm -f /tmp/.pvm.*.$(user)*
 
-pairs.pred:	$(PRED)
-	cat $(PRED) | comp2pairs > $@
-
-pairs.preds:	$(PREDS)
-	cat $(PREDS) | comp2pairs > $@
-
-pairs.spred:	$(SPRED)
-	cat $(SPRED) | comp2pairs > $@
-
-#mrs:	$(GMRS) $(OMRS) $(PMRS)
-mrs:	$(GMRS)
-
-tc-jaen-%/bitext:	$(TCDIR)/tanaka-train-jaen-%.txt
-	logon_do -b $^ tc-jaen-$*
-
-tc-jaen-%/Makefile:	$(DTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
-	cp $< $@
-
-%/comp.pred:	%/Makefile
-	make -C $* comp.pred
-
-%/comp.spred:	%/Makefile
-	make -C $* comp.spred
-
-%/comp.preds:	%/Makefile
-	make -C $* comp.preds
+mrs:	pmrs omrs
+smrs:	$(SMRS)
+tmrs:	$(TMRS)
+pmrs:	$(PMRS)
+gmrs:	$(GMRS)
+vmrs:	$(VMRS)
+omrs:	$(OMRS)
+imrs:	$(IMRS)
 
 %/smrs:	%/Makefile
 	make -C $* smrs
-
-%/omrs:	%/Makefile
-	make -C $* omrs
 
 %/tmrs:	%/Makefile
 	make -C $* tmrs
@@ -64,8 +46,32 @@ tc-jaen-%/Makefile:	$(DTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext
 %/gmrs:	%/Makefile
 	make -C $* gmrs
 
+%/vmrs:	%/Makefile
+	make -C $* vmrs
+
+%/omrs:	%/Makefile
+	make -C $* omrs
+
 %/imrs:	%/Makefile
 	make -C $* imrs
 
-.PHONY: all clean cleanall kill mrs
+pairs.pred:	$(PRED)
+	cat $(PRED) | comp2pairs > $@
+
+pairs.preds:	$(PREDS)
+	cat $(PREDS) | comp2pairs > $@
+
+pairs.spred:	$(SPRED)
+	cat $(SPRED) | comp2pairs > $@
+
+%/comp.pred:	%/Makefile
+	make -C $* comp.pred
+
+%/comp.spred:	%/Makefile
+	make -C $* comp.spred
+
+%/comp.preds:	%/Makefile
+	make -C $* comp.preds
+
+.PHONY: all clean cleanall kill %mrs
 .SECONDARY:

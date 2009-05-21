@@ -1,36 +1,50 @@
-DTHOME ?= $(HOME)/delphintools
-SRC	= ja
-TGT	= en
-JACY = $(LOGONROOT)/dfki/jacy/japanese.grm \
-       $(LOGONROOT)/dfki/jacy/lex/Jacy.rev \
-       $(LOGONROOT)/dfki/jacy/lex/tanaka-unknowns.rev \
-       $(LOGONROOT)/dfki/jacy/lkb/script
-ERG = $(LOGONROOT)/lingo/terg/english.grm \
-      $(LOGONROOT)/lingo/terg/lexdb.rev \
-      $(LOGONROOT)/lingo/terg/lkb/script
-JAEN = $(wildcard $(LOGONROOT)/uio/jaen/*.mtr) \
-       $(wildcard $(LOGONROOT)/uio/jaen/*.tdl) \
-       $(wildcard $(LOGONROOT)/uio/*.tdl) \
-       $(LOGONROOT)/uio/jaen/lkb/script
+include ../Makefile.lang
 
-LIMIT = 3
-SRESULT = smrs/result
-ORESULT = omrs/result
-TRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),tmrs/$(n)/result)
-PRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),pmrs/$(n)/result)
-GRESULT = $(foreach n,$(shell seq -w 1 $(LIMIT)),$(foreach m,$(shell seq -w 1 $(LIMIT)),tmrs/$(n)/$(m)/result))
-IRESULT = imrs/result
+DTHOME		?= $(HOME)/delphintools
+limit		:= 3
+sresult		:= smrs/result
+tresult		:= $(foreach n,$(shell seq -w 1 $(limit)),tmrs/$(n)/result)
+presult		:= $(foreach n,$(shell seq -w 1 $(limit)),pmrs/$(n)/result)
+gresult		:= $(foreach n,$(shell seq -w 1 $(limit)),$(foreach m,$(shell seq -w 1 $(limit)),tmrs/$(n)/$(m)/result))
+vresult		:= $(foreach n,$(shell seq -w 1 $(limit)),vmrs/$(n)/result)
+oresult		:= omrs/result
+iresult		:= $(foreach n,$(shell seq -w 1 $(limit)),imrs/$(n)/result)
 
 #all:	comp.spred comp.pred comp.preds
 #all:	comp.spred
-
-all:	gmrs
+all:	mrs
 
 clean:
 	rm -f comp.*
 
 cleanall:	clean
 	rm -rf *mrs
+
+mrs:	gmrs
+
+smrs:	bitext/original $($(src)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+tmrs pmrs:	bitext/original smrs $($(src)$(tgt)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+gmrs:	bitext/original tmrs $($(tgt)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+vmrs:	bitext/original smrs $($(src)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+omrs:	bitext/object $($(tgt)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+imrs:	bitext/object omrs $($(tgt)_grm)
+	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
+
+pmrs/Makefile:	$(DTHOME)/makefiles/Makefile.pmrs pmrs
+	cp $< $@
+
+%mrs/Makefile:	$(DTHOME)/makefiles/Makefile.profile %mrs
+	cp $< $@
 
 comp.pred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -p > $@
@@ -41,41 +55,10 @@ comp.preds:	omrs/stamp.pred-all pmrs/stamp.updated
 comp.spred:	omrs/stamp.pred-all pmrs/stamp.updated
 	profile2comp -s > $@
 
-pmrs/Makefile:	$(DTHOME)/makefiles/Makefile.pmrs pmrs
-	cp $< $@
-
-%mrs/Makefile:	$(DTHOME)/makefiles/Makefile.profile %mrs
-	cp $< $@
-
 %/stamp.updated:	%/Makefile %
 	make -C $* stamp.updated
 
 %/stamp.pred-all:	%/Makefile %
 	make -C $* stamp.pred-all
 
-smrs:	smrs.stamp
-omrs:	omrs.stamp
-tmrs:	tmrs.stamp
-pmrs:	pmrs.stamp
-gmrs:	gmrs.stamp
-imrs:	imrs.stamp
-
-smrs.stamp:	bitext/original $(JACY)
-	logon_do -g $(SRC)$(TGT) -t smrs -l $(LIMIT) . && touch $@
-
-omrs.stamp:	bitext/object $(ERG)
-	logon_do -g $(SRC)$(TGT) -t omrs -l $(LIMIT) . && touch $@
-
-tmrs.stamp:	bitext/original smrs.stamp $(JAEN)
-	logon_do -g $(SRC)$(TGT) -t tmrs -l $(LIMIT) . && touch $@
-
-pmrs.stamp:	bitext/original smrs.stamp $(JAEN)
-	logon_do -g $(SRC)$(TGT) -t pmrs -l $(LIMIT) . && touch $@
-
-gmrs.stamp:	bitext/original tmrs.stamp $(ERG)
-	logon_do -g $(SRC)$(TGT) -t gmrs -l $(LIMIT) . && touch $@
-
-imrs.stamp:	bitext/original smrs.stamp $(JACY)
-	logon_do -g $(SRC)$(TGT) -t imrs -l $(LIMIT) . && touch $@
-
-.PHONY: clean all %mrs
+.PHONY: clean all mrs

@@ -1,0 +1,21 @@
+LOGONROOT 	?= $(HOME)/logon
+
+src			:= ja
+tgt			:= en
+
+jacy		:= $(LOGONROOT)/dfki/jacy/japanese.grm \
+			   $(LOGONROOT)/dfki/jacy/lex/Jacy.rev \
+			   $(LOGONROOT)/dfki/jacy/lex/tanaka-unknowns.rev \
+			   $(LOGONROOT)/dfki/jacy/lkb/script
+ja_grm		:= $(jacy)
+
+erg			:= $(LOGONROOT)/lingo/terg/english.grm \
+			   $(LOGONROOT)/lingo/terg/lexdb.rev \
+			   $(LOGONROOT)/lingo/terg/lkb/script
+en_grm		:= $(erg)
+
+jaen		:= $(wildcard $(LOGONROOT)/uio/jaen/*.mtr) \
+			   $(wildcard $(LOGONROOT)/uio/jaen/*.tdl) \
+			   $(wildcard $(LOGONROOT)/uio/*.tdl) \
+			   $(LOGONROOT)/uio/jaen/lkb/script
+jaen_grm	:= $(jaen)
