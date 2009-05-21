@@ -1,5 +1,6 @@
 #!/usr/bin/make -r
 
+DTHOME	?= $(HOME)/delphintools
 SRC		= ja
 TGT		= en
 TANAKA	= $(HOME)/research/data/parallel/tanaka
