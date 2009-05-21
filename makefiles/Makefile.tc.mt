@@ -52,7 +52,7 @@ $(LOGONTMP)/$(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%.txt \
 						$(LOGONTMP) \
 						$(HOME)/mosestools/makefiles/Makefile.evaluation
 	(rm -f $(HOME)/fans && ln -sf $(LOGONTMP) $(HOME)/fans && \
-	cp $(CTHOME)/makefiles/Makefile.tc.mt.eval $(LOGONTMP)/Makefile && \
+	cp $(DTHOME)/makefiles/Makefile.tc.mt.eval $(LOGONTMP)/Makefile && \
 	$(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<)
 
 .PHONY:	all kill dev test
