@@ -14,3 +14,5 @@ tc-jaen-%/bitext:	$(tcdir)/tanaka-train-jaen-%.txt
 tc-jaen-%/Makefile:	$(DTHOME)/makefiles/Makefile.treebank tc-jaen-%/bitext Makefile.lang
 	cp $< $@
 
+Makefile.lang:	$(DTHOME)/makefiles/Makefile.$(src)$(tgt)
+	cp $< $@
