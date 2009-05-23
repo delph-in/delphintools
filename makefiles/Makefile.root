@@ -3,13 +3,13 @@
 PRED	:= $(addsuffix /comp.pred,$(PROFILES))
 PREDS	:= $(addsuffix /comp.preds,$(PROFILES))
 SPRED	:= $(addsuffix /comp.spred,$(PROFILES))
-SMRS	:= $(addsuffix /smrs,$(PROFILES))
-TMRS	:= $(addsuffix /tmrs,$(PROFILES))
-PMRS	:= $(addsuffix /pmrs,$(PROFILES))
-GMRS	:= $(addsuffix /gmrs,$(PROFILES))
-VMRS	:= $(addsuffix /vmrs,$(PROFILES))
-OMRS	:= $(addsuffix /omrs,$(PROFILES))
-IMRS	:= $(addsuffix /imrs,$(PROFILES))
+SMRS	:= $(addsuffix /smrs.verified,$(PROFILES))
+TMRS	:= $(addsuffix /tmrs.verified,$(PROFILES))
+PMRS	:= $(addsuffix /pmrs.verified,$(PROFILES))
+GMRS	:= $(addsuffix /gmrs.verified,$(PROFILES))
+VMRS	:= $(addsuffix /vmrs.verified,$(PROFILES))
+OMRS	:= $(addsuffix /omrs.verified,$(PROFILES))
+IMRS	:= $(addsuffix /imrs.verified,$(PROFILES))
 
 #all:	pairs.spred pairs.pred pairs.preds
 all:	mrs
@@ -25,7 +25,7 @@ kill:
 	rm -f /tmp/*.debug.$(user); \
 	rm -f /tmp/.pvm.*.$(user)*
 
-mrs:	pmrs omrs
+mrs:	gmrs
 smrs:	$(SMRS)
 tmrs:	$(TMRS)
 pmrs:	$(PMRS)
@@ -34,26 +34,26 @@ vmrs:	$(VMRS)
 omrs:	$(OMRS)
 imrs:	$(IMRS)
 
-%/smrs:	%/Makefile
-	make -C $* smrs
+%/smrs.verified:	%/Makefile
+	make -C $* smrs.verified
 
-%/tmrs:	%/Makefile
-	make -C $* tmrs
+%/tmrs.verified:	%/Makefile
+	make -C $* tmrs.verified
 
-%/pmrs:	%/Makefile
-	make -C $* pmrs
+%/pmrs.verified:	%/Makefile
+	make -C $* pmrs.verified
 
-%/gmrs:	%/Makefile
-	make -C $* gmrs
+%/gmrs.verified:	%/Makefile
+	make -C $* gmrs.verified
 
-%/vmrs:	%/Makefile
-	make -C $* vmrs
+%/vmrs.verified:	%/Makefile
+	make -C $* vmrs.verified
 
-%/omrs:	%/Makefile
-	make -C $* omrs
+%/omrs.verified:	%/Makefile
+	make -C $* omrs.verified
 
-%/imrs:	%/Makefile
-	make -C $* imrs
+%/imrs.verified:	%/Makefile
+	make -C $* imrs.verified
 
 pairs.pred:	$(PRED)
 	cat $(PRED) | comp2pairs > $@

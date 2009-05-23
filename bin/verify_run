@@ -1,0 +1,11 @@
+#!/bin/bash
+
+verify_run () {
+	(for r in "$*"; do
+		tail -n 1 $r |
+		cut -d@ -f20 |
+		grep -q complete 
+	done) 2>/dev/null
+}
+
+verify_run $*

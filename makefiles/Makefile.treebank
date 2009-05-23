@@ -2,13 +2,13 @@ include ../Makefile.lang
 
 DTHOME		?= $(HOME)/delphintools
 limit		:= 3
-sresult		:= smrs/result
-tresult		:= $(foreach n,$(shell seq -w 1 $(limit)),tmrs/$(n)/result)
-presult		:= $(foreach n,$(shell seq -w 1 $(limit)),pmrs/$(n)/result)
-gresult		:= $(foreach n,$(shell seq -w 1 $(limit)),$(foreach m,$(shell seq -w 1 $(limit)),tmrs/$(n)/$(m)/result))
-vresult		:= $(foreach n,$(shell seq -w 1 $(limit)),vmrs/$(n)/result)
-oresult		:= omrs/result
-iresult		:= $(foreach n,$(shell seq -w 1 $(limit)),imrs/$(n)/result)
+smrs_run	:= smrs/run
+tmrs_run	:= $(foreach n,$(shell seq -w 1 $(limit)),tmrs/$(n)/run)
+pmrs_run	:= $(foreach n,$(shell seq -w 1 $(limit)),pmrs/$(n)/run)
+gmrs_run	:= $(foreach n,$(shell seq -w 1 $(limit)),$(foreach m,$(shell seq -w 1 $(limit)),tmrs/$(n)/$(m)/run))
+vmrs_run	:= $(foreach n,$(shell seq -w 1 $(limit)),vmrs/$(n)/run)
+omrs_run	:= omrs/run
+imrs_run	:= $(foreach n,$(shell seq -w 1 $(limit)),imrs/$(n)/run)
 
 #all:	comp.spred comp.pred comp.preds
 #all:	comp.spred
@@ -22,22 +22,25 @@ cleanall:	clean
 
 mrs:	gmrs
 
+%.verified:	%
+	(verify_run $($*_run) && touch $@) || (rm -rf $* && make $@)
+
 smrs:	bitext/original $($(src)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
-tmrs pmrs:	bitext/original smrs $($(src)$(tgt)_grm)
+tmrs pmrs:	bitext/original smrs.verified $($(src)$(tgt)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
-gmrs:	bitext/original tmrs $($(tgt)_grm)
+gmrs:	bitext/original tmrs.verified $($(tgt)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
-vmrs:	bitext/original smrs $($(src)_grm)
+vmrs:	bitext/original smrs.verified $($(src)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
 omrs:	bitext/object $($(tgt)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
-imrs:	bitext/object omrs $($(tgt)_grm)
+imrs:	bitext/object omrs.verified $($(tgt)_grm)
 	logon_do -g $(src)$(tgt) -t $@ -l $(limit)
 
 pmrs/Makefile:	$(DTHOME)/makefiles/Makefile.pmrs pmrs
