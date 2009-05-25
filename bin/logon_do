@@ -62,7 +62,6 @@ usage () {
 	echo "usage: logon_do [-a|--ascii <a.txt>] [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
 
-fmt=bitext
 TREEBANK=${TREEBANK:=$HOME/treebank}
 settings=$DTHOME/lisp/settings/default.lisp
 
@@ -70,12 +69,10 @@ while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 	case $1 in
 		-a|--ascii)
 			ascii=$2
-			fmt=ascii
 			shift 2
 		;;
 	    -b|--bitext)
 			bitext=$2
-			fmt=bitext
 			shift 2
 		;;
 	    -c|--count)
@@ -140,6 +137,7 @@ elif [ -n "$ascii" ]; then
     usage
     exit 1
 elif [ -s "$profile_top/bitext/ascii" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
+	fmt=ascii
     make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
 elif [ -s "$bitext" ]; then
     mkdir -p $profile_top/bitext/ && \
@@ -150,6 +148,7 @@ elif [ -n "$bitext" ]; then
     usage
     exit 1
 elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
+	fmt=bitext
     make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
 else
     usage
