@@ -5,3 +5,4 @@
 (set (intern "*MAXIMUM-NUMBER-OF-EDGES*" :lkb) 100000)
 (set (intern "*UNPACK-EDGE-ALLOWANCE*" :lkb) 100000)
 (set (intern "*TSDB-MAXIMAL-NUMBER-OF-EDGES*" :tsdb) 100000)
+(setf fmt "ascii")

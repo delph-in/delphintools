@@ -4,7 +4,7 @@
 (tsdb::tsdb :home profile_top)
 (tsdb::tsdb :list)
 (if (not (tsdb::verify-tsdb-directory "omrs" :absolute nil))
-    (tsdb::do-import-items (format nil "~a/bitext/object" profile_top) 
+    (tsdb::do-import-items (format nil "~a/bitext/~a" profile_top fmt) 
                            "omrs" :format :bitext))
 (setf *tsdb-trees-hook* "lkb::parse-tree-structure")
 (tsdb::tsdb :process "omrs" :condition "i-wf=1")

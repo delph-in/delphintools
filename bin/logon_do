@@ -59,54 +59,60 @@ objectify () {
 }
 
 usage () {
-	echo "usage: logon_do [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
+	echo "usage: logon_do [-a|--ascii <a.txt>] [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
 
+fmt=bitext
 TREEBANK=${TREEBANK:=$HOME/treebank}
 settings=$DTHOME/lisp/settings/default.lisp
 
 while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 	case $1 in
+		-a|--ascii)
+			ascii=$2
+			fmt=ascii
+			shift 2
+		;;
 	    -b|--bitext)
-		bitext=$2
-		shift 2
+			bitext=$2
+			shift 2
 		;;
 	    -c|--count)
       		count=$2
       		shift 2
-      		;;
-      	    -d|--debug)
-		debug=true
-		shift 1
+      	;;
+		-d|--debug)
+			debug=true
+			shift 1
 		;;
-	    -e|--edges)
-		edges=$2
-		shift 2
+		-e|--edges)
+			edges=$2
+			shift 2
 		;;
-    	    -g|--grammar)
-      		grammar=$2
-      		shift 2
+    	-g|--grammar)
+			grammar=$2
+			shift 2
 		;;
-    	    -l|--limit)
-      		limit=$2
-      		shift 2
+		-l|--limit)
+			limit=$2
+			shift 2
 		;;
 	    -s|--settings)
-		settings=$2
-		shift 2
+			settings=$2
+			shift 2
 		;;
 	    -t|--task)
-		task=$2
-		shift 2
+			task=$2
+			shift 2
 		;;
 	    *)
-		usage
-		exit 1
+			usage
+			exit 1
 	esac
 done
 
 # vars that we allow the user to define
-vars="profile_top count edges limit"
+vars="profile_top count edges limit fmt"
 
 # lisp loaded before initializing user-defined vars
 blisp="$DTHOME/lisp/startup.lisp $settings"
@@ -125,6 +131,15 @@ fi
 # make logon lisp commands. copy bitext file to $profile_top/bitext/original if it doesn't exist.
 if [ -n "$debug" ]; then
     make_lisp_dbg
+elif [ -s "$ascii" ]; then
+    mkdir -p $profile_top/bitext/ && \
+	cp -r $ascii $profile_top/bitext/ascii
+elif [ -n "$ascii" ]; then
+    echo 1>&2 "Ascii file '$ascii' doesn't exist!"
+    usage
+    exit 1
+elif [ -s "$profile_top/bitext/ascii" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
+    make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
 elif [ -s "$bitext" ]; then
     mkdir -p $profile_top/bitext/ && \
 	cp -r $bitext $profile_top/bitext/original && \
