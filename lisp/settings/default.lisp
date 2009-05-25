@@ -6,4 +6,4 @@
 (set (intern "*UNPACK-EDGE-ALLOWANCE*" :lkb) 100000)
 (set (intern "*TSDB-MAXIMAL-NUMBER-OF-EDGES*" :tsdb) 100000)
 (setf mt::*transfer-edge-limit* 5000)
-(setf fmt "bitext")
+(setf fmt "original")
