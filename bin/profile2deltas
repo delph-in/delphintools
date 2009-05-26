@@ -104,7 +104,7 @@ make_deltas () {
 }
 
 profiles=$*
-#profile2scores+mtrs > sd.txt
+profile2scores+mtrs > sd.txt
 (for r in `get_mtrs`; do
 #	echo '#' make_deltas $r
 	make_deltas $r
