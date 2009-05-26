@@ -9,5 +9,5 @@
               dir :format :ascii)
             (tsdb::do-import-items (format nil "~a/bitext/original" profile_top) 
               dir :format :bitext)) )
-    (tsdb::tsdb-do-process dir :condition (format nil "result-idequal~a" n)
+    (tsdb::tsdb-do-process dir :condition (format nil "result-id=~a" n)
   	  :type :generate :overwrite t :gold "omrs") ))
