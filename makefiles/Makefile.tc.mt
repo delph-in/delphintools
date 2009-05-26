@@ -12,9 +12,11 @@ LDATE		= $(shell date -d "$(DATE)" +"%y-%m-%d")
 
 LOGONTMP	= $(RESULTS)/$(SDATE)
 
-DEV			= $(foreach n,$(shell seq -w 000 002),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-dev-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+DEV		= $(foreach n,$(shell seq -w 000 002),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-dev-$(SRC)$(TGT)-$(n).$(LDATE).fan)
 TEST		= $(foreach n,$(shell seq -w 003 005),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-$(n).$(LDATE).fan)
-TRAIN		= $(foreach n,$(shell seq -w 006 100),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+TRAINA		= $(foreach n,$(shell seq -w 006 037),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+TRAINB		= $(foreach n,$(shell seq -w 038 069),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+TRAINC		= $(foreach n,$(shell seq -w 070 100),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
 
 all:	dev test
 
@@ -23,7 +25,9 @@ kill:
 
 dev:	$(DEV)
 test:	$(TEST)
-train:	$(TRAIN)
+traina:	$(TRAINA)
+trainb:	$(TRAINB)
+trainc:	$(TRAINC)
 
 $(LOGONTMP):
 	mkdir -p $@
