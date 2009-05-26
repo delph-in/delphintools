@@ -1,0 +1,112 @@
+#!/bin/bash
+
+profile2scores+mtrs () {
+	(for p in $profiles; do
+		awk '
+		BEGIN {
+			FS = "@"
+			OFS = "\t"
+			while (getline < "'$p'/item") {
+				sid = $1
+				sent = $7
+				src[sid] = $7
+			}
+			while (getline < "'$p'/output") {
+				sid = $1
+				tgt[sid] = $8
+			}		
+		}
+		{
+			sid = $1
+			tid = $2
+			data = $15
+			print p, sid, tid, src[sid], tgt[sid], neva(data), mtrs(data)
+		}
+		function neva (data) {
+			sub(/^.+\(:NEVA \./, "", data)
+			sub(/\).+$/, "", data)
+			return data
+		}
+		function mtrs (data) {
+			sub(/^.+\(:MTRS /, "", data)
+			sub(/\).+$/, "", data)
+			return data
+		}' p=$(basename $(dirname $p)) < $p/result
+	done)
+}
+
+filter_sids () {
+	mtr=$1
+	for s in `grep "$mtr" sd.txt | cut -f1,2 | sort -nu`; do
+		echo grep "^$s	" sd.txt
+	done
+}
+
+get_mtrs () {
+	cat sd.txt |
+	cut -f7 |
+	tr ' ' '
+' | sort -u
+}
+
+make_deltas () {
+	mtr=$1
+#	filter_sids $mtr |
+	awk '
+	BEGIN {
+		FS = OFS = "\t"
+		max_w = -1
+		max_wo = -1
+		sent = 0
+		zero = 0
+		delta = 0.0
+	}
+	id != $2 {
+		if (found) {
+			if (max_wo > -1) {
+				delta += diff(max_w,max_wo)
+				sent += 1
+			} else {
+				zero += 1
+			}
+		}
+		found = ""
+		max_w = -1
+		max_wo = -1
+		id = $2
+	}
+	{
+		neva = $6
+		if (index($0,mtr)) {
+#			print "FOUND: " $0
+			found = "true"
+			if (neva > max_w) max_w = neva
+		} else {
+#			print "NOT FOUND:" $0
+			if (neva > max_wo) max_wo = neva
+		}
+	}
+	END {
+		if (found) {
+			if (max_wo > -1) {
+				delta += diff(max_w,max_wo)
+				sent += 1
+			} else {
+				zero += 1
+			}
+		}
+		(sent > 0) ? avg = delta/sent : avg = 0
+		print mtr, avg, delta, sent, zero
+	}
+	function diff(max_w,max_wo) {
+		return max_w-max_wo
+	}' mtr="$mtr" < sd.txt
+}
+
+profiles=$*
+#profile2scores+mtrs > sd.txt
+(for r in `get_mtrs`; do
+#	echo '#' make_deltas $r
+	make_deltas $r
+done) #|
+#sort -k2n -k3nr
