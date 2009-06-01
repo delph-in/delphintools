@@ -33,6 +33,6 @@ $(LOGONTMP):
 	mkdir -p $@
 
 $(LOGONTMP)/$(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%.txt $(LOGONTMP)
-	LOGONTMP=$(LOGONTMP) $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<
+	LOGONTMP=$(LOGONTMP) DISPLAY="" LUI="" $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<
 
 .PHONY:	all kill dev test train
