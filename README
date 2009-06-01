@@ -72,7 +72,7 @@ SUPPORTED GRAMMARS
 Currently, the following grammars are supported.
 
 jaen: Japanese->English translation
-enen: English->English paraphrasing (tmrs, gmrs, omrs, and imrs are not currently supported)
+enen: English->English paraphrasing (omrs and imrs are supported)
 
 Users can add support for their own systems by copying and modifying the settings files for an existing grammar to call appropriate TSDB CPUs for each task:
 
