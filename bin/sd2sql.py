@@ -42,6 +42,12 @@ assoc_table2 = Table('assoc2', metadata,
 	Column('mtr_id', Integer, ForeignKey('mtrs.id')),
 )
 
+from sqlalchemy import Index
+Index('tids', trans_table.c.id, trans_table.c.profile, trans_table.c.sid, unique=True)
+Index('nids', neva_table.c.id, neva_table.c.tid, neva_table.c.neva, unique=True)
+Index('1ids', assoc_table1.c.trans_id, assoc_table1.c.mtr_id, unique=True)
+Index('2ids', assoc_table2.c.neva_id, assoc_table2.c.mtr_id, unique=True)
+
 # create tables
 metadata.create_all(engine)
 # bind to engine
@@ -85,7 +91,12 @@ from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine, autoflush=True, transactional=True)
 session = Session()
 
+print "Creating tables"
+i = 0
 for l in (sys.stdin):
+	if ((i % 100) == 0):
+		print "."
+	i += 1
 	d = l.split("\t")
 	profile = d[0]
 	sid = int(d[1])
@@ -116,6 +127,7 @@ for l in (sys.stdin):
 		m.trans.append(t)
 		m.nevas.append(n)
 session.commit()
+print "done!"
 
 from sqlalchemy.sql import select, func
 #s = session.query(Neva).select_from(select([func.max(neva_table.c.neva, type_=Float).label('max_neva')])).first()
