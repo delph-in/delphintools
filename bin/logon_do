@@ -1,5 +1,8 @@
 #!/bin/bash
 
+unset LUI
+unset DISPLAY
+
 setf_vars () {
 	for v in $vars; do
 		if [[ "${!v}" =~ [A-Za-z] ]]; then
@@ -137,8 +140,8 @@ elif [ -n "$ascii" ]; then
     usage
     exit 1
 elif [ -s "$profile_top/bitext/ascii" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
-	fmt=ascii
-    make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
+    fmt=ascii
+    make_lisp | $LOGONROOT/bin/logon
 elif [ -s "$bitext" ]; then
     mkdir -p $profile_top/bitext/ && \
 	cp -r $bitext $profile_top/bitext/original && \
@@ -148,8 +151,8 @@ elif [ -n "$bitext" ]; then
     usage
     exit 1
 elif [ -s "$profile_top/bitext/original" -a -s "$profile_top/bitext/object" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]; then
-	fmt=bitext
-    make_lisp | DISPLAY="" LUI="" $LOGONROOT/bin/logon
+    fmt=bitext
+    make_lisp | $LOGONROOT/bin/logon
 else
     usage
     exit 1
