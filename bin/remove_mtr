@@ -1,0 +1,41 @@
+#!/bin/bash
+
+remove_mtr () {
+	awk '
+	BEGIN {
+		FS = "\t"
+		while (getline < "delete.mtrs") {
+			mtrs[tolower($1)] = "true"
+		}
+		RS = ""
+		FS = OFS = "\n"
+		p = ""
+	}
+	{
+		if ($1 ~ /:=/) {
+			split($1,r," := ")
+		}
+		else {
+			split($2,r," := ")
+		}
+		rule = r[1]
+		if (rule in mtrs) {
+			print ";;; DELETED: " r[1], r[2]
+			gsub("-omtr", "-mtr", p)
+			gsub("_omtr", "_mtr", p)
+		}
+		print p "\n"
+		if (rule in mtrs) {
+			p = ""
+		}
+		else {
+			p = $0
+		}
+	}
+	END {
+		print p
+	}' $* |
+	tail -n +3
+}
+
+remove_mtr $*

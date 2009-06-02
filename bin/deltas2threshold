@@ -1,0 +1,23 @@
+#!/bin/bash
+
+deltas2threshold () {
+	awk '
+	BEGIN {
+		FS="\t"
+	}
+	($2 < avg || $3 < total) && ($4 > 0) && ($5 < dep) && ($5/$4 < r) {
+		print
+	}' avg=$1 total=$2 dep=$3 r=$4
+}
+
+usage () {
+    echo 1>&2 "usage: deltas2threshold <avg-delta> <total-delta> <dependant-translations> <ratio>"
+}
+
+if [ $# != 4 ]; then
+    usage
+    exit 1
+else
+#    deltas2threshold -0.04 -1.0 25 0.2
+    deltas2threshold $*
+fi
