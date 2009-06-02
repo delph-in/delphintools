@@ -12,8 +12,9 @@ LDATE		= $(shell date -d "$(DATE)" +"%y-%m-%d")
 
 LOGONTMP	= $(RESULTS)/$(SDATE)
 
-DEV		= $(foreach n,$(shell seq -w 000 002),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-dev-$(SRC)$(TGT)-$(n).$(LDATE).fan)
-TEST		= $(foreach n,$(shell seq -w 003 005),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+SUF		= aa ab ac ad ae af ag ah ai aj
+DEV		= $(foreach n,$(shell seq -w 000 002),$(foreach s,$(SUF),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-dev-$(SRC)$(TGT)-$(n)-$(s).$(LDATE).fan))
+TEST		= $(foreach n,$(shell seq -w 003 005),$(foreach s,$(SUF),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-test-$(SRC)$(TGT)-$(n)-$(s).$(LDATE).fan))
 TRAINA		= $(foreach n,$(shell seq -w 006 037),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
 TRAINB		= $(foreach n,$(shell seq -w 038 069),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
 TRAINC		= $(foreach n,$(shell seq -w 070 100),$(LOGONTMP)/$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
@@ -33,6 +34,6 @@ $(LOGONTMP):
 	mkdir -p $@
 
 $(LOGONTMP)/$(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%.txt $(LOGONTMP)
-	LOGONTMP=$(LOGONTMP) DISPLAY="" LUI="" $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<
+	env TREEBANK=$(HOME)/treebank env LOGONTMP=$(LOGONTMP) env DISPLAY="" env LUI="" $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<
 
 .PHONY:	all kill dev test train
