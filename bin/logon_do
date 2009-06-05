@@ -39,28 +39,6 @@ make_lisp () {
 	done
 }
 
-objectify () {
-	awk '
-	BEGIN {
-		FS=OFS="\n"
-		RS=ORS=""
-	}
-	{
-                if (match($1, /^(\[[0-9]+\] +)(.+)(;;[^;]+)$/, ids)) {
-                        num = ids[1]
-                        src = ids[2]
-                        tid = ids[3]
-		        tgt = num $2 tid
-                }
-                else {
-                        src = $1
-                        tgt = $2
-                }
-
-		print tgt, src, "\n"
-	}'
-}
-
 usage () {
 	echo "usage: logon_do [-a|--ascii <a.txt>] [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
@@ -145,7 +123,7 @@ elif [ -s "$profile_top/bitext/ascii" -a -s "$DTHOME/lisp/$grammar/$task.lisp" ]
 elif [ -s "$bitext" ]; then
     mkdir -p $profile_top/bitext/ && \
 	cp -r $bitext $profile_top/bitext/original && \
-	objectify < $profile_top/bitext/original > $profile_top/bitext/object
+	objectify_bitext < $profile_top/bitext/original > $profile_top/bitext/object
 elif [ -n "$bitext" ]; then
     echo 1>&2 "Bitext file '$bitext' doesn't exist!"
     usage
