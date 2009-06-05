@@ -20,7 +20,7 @@ remove_mtr () {
 		}
 		rule = r[1]
 		if (rule in mtrs) {
-			print ";;; DELETED: " r[1], r[2]
+			print ";;; DELETED: " r[1] " " r[2]
 			gsub("-omtr", "-mtr", p)
 			gsub("_omtr", "_mtr", p)
 		}

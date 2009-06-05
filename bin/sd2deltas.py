@@ -29,7 +29,7 @@ for l in (sys.stdin):
 		trans.setdefault(m,{})
 		trans[m].setdefault(profile,{})
 		trans[m][profile].setdefault(sid,{})
-		trans[m][profile][sid].setdefault(sid,True)
+		trans[m][profile][sid].setdefault(aid,True)
 		
 		nevas.setdefault(profile,{})
 		nevas[profile].setdefault(sid,{})
@@ -48,17 +48,19 @@ print >>sys.stderr, "done!"
 
 for m in sorted(trans.keys()):
 	delta = 0.0
-	complete = 0
+	avg = 0.0
+	ambiguous = 0
+	unique = 0
 	total = 0
 
 	for p in sorted(trans[m].keys()):
 #		print >>sys.stderr, "\t", p
 		for s in sorted(trans[m][p].keys()):
+#			print >>sys.stderr, "\t\t", s
 			for a in sorted(trans[m][p][s]):
-#				print >>sys.stderr, "\t\t", s
+#				print >>sys.stderr, "\t\t\t", a
 				max_w = 0.0
 				max_wo = 0.0
-
 				for t in sorted(mtrs[p][s][a].keys()):
 #					print >>sys.stderr, "\t\t\t", t, neva
 					neva = nevas[p][s][a][t]
@@ -69,8 +71,12 @@ for m in sorted(trans.keys()):
 
 				total += 1
 				if max_wo > 0:
+					ambiguous += 1
 					delta += max_w-max_wo
 				else:
-					complete += 1
-
-	print m, delta, complete, total
+					unique += 1
+	
+	if (ambiguous > 0):
+		avg = delta/ambiguous
+	
+	print m, avg, delta, ambiguous, unique, total

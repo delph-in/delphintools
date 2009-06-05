@@ -2,10 +2,7 @@
 
 deltas2threshold () {
 	awk '
-	BEGIN {
-		FS="\t"
-	}
-	($2 < avg || $3 < total) && ($4 > 0) && ($5 < dep) && ($5/$4 < r) {
+	($2 < avg || $3 < total) && ($4 > 0) && ($5 < dep) && ($5/$6 < r) {
 		print
 	}' avg=$1 total=$2 dep=$3 r=$4
 }
