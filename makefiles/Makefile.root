@@ -21,7 +21,7 @@ cleanall:	clean
 	rm -rf $(PROFILES)
 
 kill:
-	killall -9 logon alisp cheap tsdb lkb yzlui pvmd3; \
+	killall -q -9 logon alisp cheap tsdb lkb yzlui pvmd3; \
 	rm -f /tmp/*.debug.$(user); \
 	rm -f /tmp/.pvm.*.$(user)*
 
