@@ -1,0 +1,27 @@
+#!/bin/bash
+
+fans2gains () {
+	sed 's/[\t ]*$//g' |
+	awk '
+	BEGIN {
+		RS = ""
+		ORS = "\n\n"
+		FS = OFS = "\n"
+	}
+	{
+		gained = "true"
+		for(i=3;i<=NF;i++){
+			if($i !~ />/){
+				gained = ""
+			}
+		}
+		if((NF>=3)&&(gained=="true")){
+			gsub(">","")
+			print
+		}
+	}' |
+	sed 's/^[\t ]*//g' |
+	cut -f1
+}
+
+fans2gains

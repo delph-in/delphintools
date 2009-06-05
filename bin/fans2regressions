@@ -1,0 +1,25 @@
+#!/bin/bash
+
+fans2regressions () {
+	sed 's/[\t ]*$//g' |
+	awk '
+	BEGIN {
+		RS = ""
+		ORS = "\n\n"
+		FS = OFS = "\n"
+	}
+	{
+		lost = "true"
+		for(i=3;i<=NF;i++){
+			if($i !~ /</){
+				lost = ""
+			}
+		}
+		if((NF>=3)&&(lost=="true")){
+			gsub("<","")
+			print
+		}
+	}' | cut -f1
+}
+
+fans2regressions
