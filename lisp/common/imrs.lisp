@@ -7,7 +7,7 @@
         (if (equal fmt "ascii")
             (tsdb::do-import-items (format nil "~a/bitext/ascii" profile_top) 
               dir :format :ascii)
-            (tsdb::do-import-items (format nil "~a/bitext/original" profile_top) 
+            (tsdb::do-import-items (format nil "~a/bitext/object" profile_top) 
               dir :format :bitext)) )
     (tsdb::tsdb-do-process dir :condition (format nil "result-id=~a" n)
   	  :type :generate :overwrite t :gold "omrs") ))

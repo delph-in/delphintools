@@ -8,7 +8,7 @@
       (if (equal fmt "ascii")
           (tsdb::do-import-items (format nil "~a/bitext/ascii" profile_top) 
             dir :format :ascii)
-          (tsdb::do-import-items (format nil "~a/bitext/original" profile_top) 
+          (tsdb::do-import-items (format nil "~a/bitext/object" profile_top) 
             dir :format :bitext))) )
 (setf *tsdb-trees-hook* "lkb::parse-tree-structure")
 (tsdb::tsdb :process "omrs" :condition "i-wf=1")
