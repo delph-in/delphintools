@@ -1,0 +1,6 @@
+[1] The beef import ban  ;;; _the_q_rel-def_q_rel
+[2] The cat's mouse ;;; def_explicit_q_rel-def_q_rel
+[3] The zoo of the elephant ;;; _of_p_rel-of_p_rel
+[4] The tree's apples ;;; poss_rel-of_p_rel
+[5] The group's inquiry ;;; poss_rel-compound_rel, defq_rel_x2_poss_rel-udef_rel_compound_rel
+[6] The bird watcher ;;; dq_rel_compound_rel_uq_rel-poss_rel_duaq_rel

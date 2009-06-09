@@ -2,7 +2,7 @@
 
 DTHOME		?= $(HOME)/delphintools
 PROFILES	:= $(foreach n,$(shell seq -w 6 100),tc-jaen-$(n))
-tcdir		:= $(HOME)/research/data/parallel/tanaka/bitext/train/sub
+tcdir		:= $(HOME)/research/data/parallel/tanaka/tc-0906/bitext/train/sub
 src			:= ja
 tgt			:= en
 

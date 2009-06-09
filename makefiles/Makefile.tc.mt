@@ -3,8 +3,9 @@
 DTHOME		?= $(HOME)/delphintools
 SRC			= ja
 TGT			= en
-TANAKA		= $(HOME)/research/data/parallel/tanaka
-RESULTS		= $(TANAKA)/results
+TCROOT		= $(HOME)/research/data/parallel/tanaka
+TANAKA		= $(TCROOT)/tc-0906
+RESULTS		= $(TCROOT)/results
 
 DATE		= $(shell date)
 SDATE		= $(shell date -d "$(DATE)" +"%Y%m%d")
