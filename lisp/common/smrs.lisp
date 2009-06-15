@@ -11,4 +11,4 @@
           (tsdb::do-import-items (format nil "~a/bitext/original" profile_top) 
             dir :format :bitext))) )
 (setf *tsdb-trees-hook* "lkb::parse-tree-structure")
-(tsdb::tsdb :process "smrs" :condition "i-wf=1")
+(tsdb::tsdb :process "smrs" :condition (format nil "(i-wf=1) && (i-id>~a)" parse-start))
