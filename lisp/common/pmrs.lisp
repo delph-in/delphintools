@@ -1,3 +1,4 @@
+;; Starting common/pmrs.lisp
 (setf tsdb::*tsdb-transfer-include-fragments-p* t)
 (tsdb::tsdb :home profile_top)
 (tsdb::tsdb :list)
@@ -9,5 +10,6 @@
               dir :format :ascii)
             (tsdb::do-import-items (format nil "~a/bitext/original" profile_top) 
               dir :format :bitext)) )
-    (tsdb::tsdb-do-process dir :condition (format nil "result-id=~a" n)
+    (tsdb::tsdb-do-process dir :condition (format nil "(result-id=~a) && (i-id>~a)" n transfer-start)
 	  :type :transfer :overwrite t :gold "smrs")))
+;; Ending common/pmrs.lisp
