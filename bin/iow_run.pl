@@ -57,6 +57,9 @@ for($i=0; $i <= $#ARGV; $i++) {
 	} elsif($ARGV[$i] eq "-system-type") {
 		$IOW_TYPE = $ARGV[++$i];
 		print STDERR "Setting system type to: $IOW_TYPE\n";
+	} elsif($ARGV[$i] eq "-partial-part") {
+		$IOW_PARTIAL_PART = $ARGV[++$i];
+		print STDERR "Partial part is: $IOW_PARTIAL_PART\n";
 	} elsif($ARGV[$i] eq "-force") {
 		$IOW_FORCE = true;
 		print STDERR "Setting Force to: $IOW_FORCE\n";
@@ -84,8 +87,8 @@ sub run_erg {
 	print STDERR "Exec: logon_do -g enen -t smrs -l 1 -c $IOW_CPU_COUNT $WORK_PART_DIR\n";
 	system("logon_do -g enen -t smrs -l 1 -c $IOW_CPU_COUNT $WORK_PART_DIR");
 	
-	print STDERR "Exec: logon_do -s " . $ENV{"DTHOME"} . "/lisp/settings/para_erg_gen.lisp -g enen -t vmrs -c $IOW_CPU_COUNT $WORK_PART_DIR\n";
-	system("logon_do -s " . $ENV{"DTHOME"} . "/lisp/settings/para_erg_gen.lisp -g enen -t vmrs -c $IOW_CPU_COUNT $WORK_PART_DIR");
+	print STDERR "Exec: logon_do -s " . $ENV{"DTHOME"} . "/lisp/settings/paraphrasing.lisp -g enen -t vmrs -c $IOW_CPU_COUNT $WORK_PART_DIR\n";
+	system("logon_do -s " . $ENV{"DTHOME"} . "/lisp/settings/paraphrasing.lisp -g enen -t vmrs -c $IOW_CPU_COUNT $WORK_PART_DIR");
 }
 
 sub run_enen {
@@ -115,14 +118,17 @@ die "Please remove the directory $WORK_DIR before running this script again." if
 print "Going to make $WORK_DIR\n";
 `mkdir $WORK_DIR`;
 `cp $IOW_CORPUS_FILE $WORK_DIR`;
-die "IOW Corpus Break could not be found." unless -e "./iow_corpus_break.pl";
-$NUM_PARTS = `./iow_corpus_break.pl -corpus-file $WORK_DIR/$CORPUS_FILE_NAME -segment-length 2000`;
+die "IOW Corpus Break could not be found." unless -e "$ENV{'DTHOME'}/bin/iow_corpus_break.pl";
+$NUM_PARTS = `$ENV{"DTHOME"}/bin/iow_corpus_break.pl -corpus-file $WORK_DIR/$CORPUS_FILE_NAME -segment-length 2000`;
 
 }
 
+$CORPUS_SIZE = `wc -l < $WORK_DIR/$CORPUS_FILE_NAME`;
+$NUM_PARTS = (int $CORPUS_SIZE / 2000) + (((int $CORPUS_SIZE % 2000) > 0) ? 1 : 0);
+
 if(check_stage(2)) {
 ## For Each Part Run the Delphin Tools Framework
-for($cur_part=0; $cur_part < $NUM_PARTS; $cur_part++) {
+for($cur_part=$IOW_PARTIAL_PART; $cur_part < $NUM_PARTS; $cur_part++) {
 	$WORK_PART_DIR = "${WORK_DIR}/${IOW_PROFILE_DIRECTORY_NAME}_${cur_part}";
 	print STDERR "Making Directory: $WORK_PART_DIR\n";
 	`mkdir $WORK_PART_DIR`;
@@ -135,7 +141,7 @@ for($cur_part=0; $cur_part < $NUM_PARTS; $cur_part++) {
 }
 
 if(check_stage(3)) {
-die "iow_post could not be found." unless -e "./iow_post.pl";
+die "iow_post could not be found." unless -e "$ENV{'DTHOME'}/bin/iow_post.pl";
 ## Time To Collect All The Results from VMRS
 $cur_part=0;
 $WORK_PART_BASE_PATH = "${WORK_DIR}/${IOW_PROFILE_DIRECTORY_NAME}";
@@ -144,8 +150,8 @@ while(-e "${WORK_PART_BASE_PATH}_${cur_part}" && -d "${WORK_PART_BASE_PATH}_${cu
 	$PART_FULL_PATH = "${WORK_DIR}/${CORPUS_FILE_NAME}.part${cur_part}";
 ## Prune Duplicates to Temp File
 `cut -d@ -f1,13 $WORK_PART_DIR/gpmrs/?/?/result >> $WORK_DIR/$CORPUS_FILE_NAME.part$cur_part.mapped.gpmrs.result`;
-print "./iow_post.pl -vmrs-result-file ${PART_FULL_PATH}.mapped.gpmrs.result -corpus-map-file ${PART_FULL_PATH}.map -mapped-corpus-file ${PART_FULL_PATH}.mapped -fill-num ${IOW_FILL_NUM} -fill-method ${IOW_FILL_METHOD} >> ${WORK_DIR}/${CORPUS_FILE_NAME}.result";
-`./iow_post.pl -vmrs-result-file ${PART_FULL_PATH}.mapped.gpmrs.result -corpus-map-file ${PART_FULL_PATH}.map -mapped-corpus-file ${PART_FULL_PATH}.mapped -fill-num ${IOW_FILL_NUM} -fill-method ${IOW_FILL_METHOD} >> ${WORK_DIR}/${CORPUS_FILE_NAME}.result`;
+print "$ENV{'DTHOME'}/bin/iow_post.pl -vmrs-result-file ${PART_FULL_PATH}.mapped.gpmrs.result -corpus-map-file ${PART_FULL_PATH}.map -mapped-corpus-file ${PART_FULL_PATH}.mapped -fill-num ${IOW_FILL_NUM} -fill-method ${IOW_FILL_METHOD} >> ${WORK_DIR}/${CORPUS_FILE_NAME}.result";
+`$ENV{'DTHOME'}/bin/iow_post.pl -vmrs-result-file ${PART_FULL_PATH}.mapped.gpmrs.result -corpus-map-file ${PART_FULL_PATH}.map -mapped-corpus-file ${PART_FULL_PATH}.mapped -fill-num ${IOW_FILL_NUM} -fill-method ${IOW_FILL_METHOD} >> ${WORK_DIR}/${CORPUS_FILE_NAME}.result`;
 $cur_part++;
 }
 }
