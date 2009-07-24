@@ -6,7 +6,7 @@ test:	test.out test.gold
 	diff -u test.gold test.out
 
 clean:
-	rm -rf *mrs test.out
+	rm -rf *mrs test.out .tsdb_history
 
 test.out:	gmrs
 	cut -d@ -f1,2,12 $</*/*/result | sort -t@ -k1n -k2n -k3 > $@
