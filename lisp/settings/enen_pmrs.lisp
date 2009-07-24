@@ -1,5 +1,6 @@
 (setf fmt "ascii")
-(setf limit 1) ;;; consider 10 transfer results
+(setf limit 1) ;;; consider 1 transfer result
+(setf parse-limit limit)
 (setf count 1)
 (setf tsdb::*tsdb-maximal-number-of-analyses* 100)
 (setf tsdb::*tsdb-maximal-number-of-results* 10)
