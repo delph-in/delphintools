@@ -1,17 +1,31 @@
+################################################################################
 #!/usr/bin/python2.5
+# -*- coding: utf-8 -*-
 
+from __future__ import with_statement
+
+# utf-8 i/o plz!
 import sys
+import codecs
+from functools import partial
+stdout = codecs.getwriter('utf-8')(sys.stdout)
+stdin = codecs.getwriter('utf-8')(sys.stdin)
+stderr = codecs.getwriter('utf-8')(sys.stderr)
+open = partial(codecs.open, encoding='utf8')
 
-print >>sys.stderr, "Building hashes",
+from collections import defaultdict
 
-trans = {}
-nevas = {}
-mtrs = {}
+print >>stderr, "Building hashes",
+
+trans = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(bool)))))
+nevas = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(float)))))
+mtrs = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(bool)))))
+
 i = 0
 for l in (sys.stdin):
 #	print l
 	if ((i % 1000) == 0):
-		print >>sys.stderr, ".",
+		print >>stderr, ".",
 	i += 1
 
 	d = l.split("\t")
@@ -26,43 +40,29 @@ for l in (sys.stdin):
 	mtr_list = set(d[8].split())
 	
 	for m in mtr_list:
-		trans.setdefault(m,{})
-		trans[m].setdefault(profile,{})
-		trans[m][profile].setdefault(sid,{})
-		trans[m][profile][sid].setdefault(aid,True)
-		
-		nevas.setdefault(profile,{})
-		nevas[profile].setdefault(sid,{})
-		nevas[profile][sid].setdefault(aid,{})
-		nevas[profile][sid][aid].setdefault(tid,neva)
-		
-		mtrs.setdefault(profile,{})
-		mtrs[profile].setdefault(sid,{})
-		mtrs[profile][sid].setdefault(aid,{})
-		mtrs[profile][sid][aid].setdefault(tid,{})
-		mtrs[profile][sid][aid][tid].setdefault(m,True)
+		trans[m][profile][sid][aid] = True
+		nevas[profile][sid][aid][tid] = neva
+		mtrs[profile][sid][aid][tid][m] = True
+#		print >>stderr, "\t", profile, sid, aid, tid, neva, m
 
-#		print "\t", profile, sid, aid, tid, neva, m
-
-print >>sys.stderr, "done!"
+print >>stderr, "done!"
 
 for m in sorted(trans.keys()):
 	delta = 0.0
-	avg = 0.0
 	ambiguous = 0
 	unique = 0
 	total = 0
 
 	for p in sorted(trans[m].keys()):
-#		print >>sys.stderr, "\t", p
+#		print >>stderr, "\t", p
 		for s in sorted(trans[m][p].keys()):
-#			print >>sys.stderr, "\t\t", s
+#			print >>stderr, "\t\t", s
 			for a in sorted(trans[m][p][s]):
-#				print >>sys.stderr, "\t\t\t", a
+#				print >>stderr, "\t\t\t", a
 				max_w = 0.0
 				max_wo = 0.0
 				for t in sorted(mtrs[p][s][a].keys()):
-#					print >>sys.stderr, "\t\t\t", t, neva
+#					print >>stderr, "\t\t\t", t, neva
 					neva = nevas[p][s][a][t]
 					if m in mtrs[p][s][a][t]:
 						max_w = max(max_w,neva)
@@ -76,7 +76,5 @@ for m in sorted(trans.keys()):
 				else:
 					unique += 1
 	
-	if (ambiguous > 0):
-		avg = delta/ambiguous
-	
-	print m, avg, delta, ambiguous, unique, total
+	avg = delta/ambiguous if ambiguous>0 else 0.0
+	print >>stdout, m, avg, delta, ambiguous, unique, total
