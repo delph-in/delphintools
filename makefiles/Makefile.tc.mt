@@ -18,7 +18,7 @@ DEV		= $(foreach n,$(shell seq -w 000 002),$(foreach s,$(SUF),$(SRC)2$(TGT).tana
 TEST		= $(foreach n,$(shell seq -w 003 005),$(foreach s,$(SUF),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
 TRAINA		= $(foreach n,$(shell seq -w 006 037),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
 TRAINB		= $(foreach n,$(shell seq -w 038 069),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
-TRAINC		= $(foreach n,$(shell seq -w 070 100),$(SRC)2$(TGT).tanaka-train-$(SRC)$(TGT)-$(n).$(LDATE).fan)
+TRAINC		= $(foreach n,$(shell seq -w 070 100),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
 
 all:	dev test
 
@@ -34,7 +34,10 @@ trainc:	$(TRAINC)
 $(LOGONTMP):
 	mkdir -p $@
 
-$(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%
-	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --ascii $<
+$(DEV) $(TEST) : $(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%
+	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:125 --ascii $<
+
+$(TRAINA) $(TRAINB) $(TRAINC) : $(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%
+	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 3:10:5:150 --ascii $<
 
 .PHONY:	all kill dev test train
