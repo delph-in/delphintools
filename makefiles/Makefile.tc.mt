@@ -34,10 +34,13 @@ trainc:	$(TRAINC)
 $(LOGONTMP):
 	mkdir -p $@
 
-$(DEV) $(TEST) : $(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%
+$(DEV) : $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/dev/sub/%
 	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:125 --ascii $<
 
-$(TRAINA) $(TRAINB) $(TRAINC) : $(SRC)2$(TGT).%.$(LDATE).fan:	$(TANAKA)/bitext/*/sub/%
+$(TEST) : $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/test/sub/%
+	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:125 --ascii $<
+
+$(TRAINA) $(TRAINB) $(TRAINC) :  $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/train/sub/%
 	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 3:10:5:150 --ascii $<
 
 .PHONY:	all kill dev test train
