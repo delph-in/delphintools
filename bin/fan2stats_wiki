@@ -1,0 +1,38 @@
+#!/bin/bash
+
+stats_tab2wiki () {
+    awk '
+    BEGIN {
+        FS = "\t"
+        OFS = " || "
+    }
+    {
+                year = substr($1, 0, 4)
+                month = substr($1, 4, 2)
+                day = substr($1, 6, 2)
+                date = sprintf("%d-%d-%d", year, month, day)
+                neva = $2
+                oracle = $3
+                f1 = $4
+                parse = $5
+                transfer = $6
+                generate = $7
+                total = $8
+                note = $9
+
+                coverage_fmt = "%d / %d (%3.2f%%)"
+                parse_str = sprintf(coverage_fmt, parse, total, 100*parse/total)
+		transfer_str = sprintf(coverage_fmt, transfer, parse, 100*transfer/parse)
+		generate_str = sprintf(coverage_fmt, generate, transfer, 100*generate/transfer)
+                total_str = sprintf(coverage_fmt, generate, total, 100*generate/total)
+
+                score_fmt = "%3.2f"
+                neva_str = sprintf(score_fmt, 100*neva)
+                oracle_str = sprintf(score_fmt, 100*oracle)
+                f1_str = sprintf(score_fmt, 100*f1)
+
+                print "|| " note, date, parse_str, transfer_str, generate_str, total_str, neva_str, oracle_str, f1_str " ||"
+   }'
+}
+
+fan2stats_tab "$@" | stats_tab2wiki

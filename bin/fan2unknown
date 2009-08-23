@@ -13,7 +13,7 @@ fan2unknown () {
 	grep -v "^ *$" |
 	sort |
 	uniq -c |
-	sort -n
+	sort -nr
 }
 
 fan2unknown
