@@ -1,0 +1,40 @@
+#!/bin/bash
+
+fan2stats () {
+    date=$1
+    shift 1
+    note="$*"
+    grep '|=' |
+    sed 's/:0//g
+	 s/+0.0//g
+	 s/[{}<>;]//g' |
+    awk '
+    BEGIN {
+                OFS = "\t"
+    }
+    /\|=/ {
+		parse += $2
+		transfer += $6
+		generate += $11
+		total += $19
+		b = NF - 1 
+		split($b, scores, "|")
+		bleu += scores[1] * $17 
+		oracle += $NF * $17
+    }
+    END {
+		n = split(date,d,".")
+		n>=1 ? date = d[1] : date = "00-00-00"
+		n>=2 ? rev = d[2] : rev = 0
+		n>=3 ? id = d[3] : id = 0
+		note == "" ? note = "+CHANGE" : note = note
+		bleu /= generate
+		oracle /= generate
+		precision = bleu
+		recall = generate / total
+		f = (2 * precision * recall) / (precision + recall)
+		print date, bleu, oracle, f, parse, transfer, generate, total, note, rev, id
+   }' date=$date note=$note
+}
+
+fan2stats $*
