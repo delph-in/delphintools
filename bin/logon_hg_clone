@@ -1,0 +1,21 @@
+#!/bin/bash
+
+OLD=$HOME/logon.hg.old
+NEW=$HOME/logon.hg
+SVN=$HOME/logon.svn
+
+echo -n "Cloning $SVN ..."
+mv $NEW $OLD
+hg clone $SVN $NEW
+echo " done."
+
+echo -n "Copying .hgignore, batch, and uio/jaen changes ..."
+rsync -Pauvz $OLD/.hgignore $NEW/
+rsync -Pauvz $OLD/batch $NEW/
+rsync -Pauvz --exclude=.hg $OLD/uio/jaen $NEW/uio/
+echo " done."
+
+echo -n "Linking JACY and ja2en ..."
+ln -sf $HOME/jacy.hg $NEW/dfki/jacy
+ln -sf $HOME/tbs/ja2en $NEW/lingo/lkb/src/tsdb/home/ja2en
+echo " done."

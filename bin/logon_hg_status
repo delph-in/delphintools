@@ -1,0 +1,87 @@
+#!/bin/bash
+
+LOGONHG=$HOME/logon.hg
+LOGONSVN=$HOME/logon.svn
+hg_cmd="hg -R $LOGONHG"
+
+logon_hg () {
+    hg -R $LOGONHG $* 2>/dev/null
+}
+
+logon_inpatch () {
+    logon_hg incoming -p | grep 'diff -r'
+}
+
+logon_outpatch () {
+    logon_hg outgoing -p | grep 'diff -r'
+}
+
+
+echo "HG STATUS JAEN:"
+logon_hg status | grep uio/jaen
+echo ""
+
+echo "HG STATUS ROOT:"
+logon_hg status | grep -v uio/jaen
+echo ""
+
+echo "HG INCOMING:"
+(cd $LOGONSVN && hgpullsvn -n)
+logon_hg incoming
+logon_inpatch > tmp.incoming.$$
+echo ""
+
+echo "HG INCOMING JAEN:"
+IJSTAT=$(grep uio/jaen tmp.incoming.$$)
+grep uio/jaen tmp.incoming.$$
+echo ""
+
+echo "HG INCOMING ROOT:"
+IRSTAT=$(grep -v uio/jaen tmp.incoming.$$)
+grep -v uio/jaen tmp.incoming.$$
+echo ""
+
+echo "HG OUTGOING:"
+logon_hg outgoing
+logon_outpatch > tmp.outgoing.$$
+echo ""
+
+echo "HG OUTGOING JAEN:"
+OJSTAT=$(grep uio/jaen tmp.outgoing.$$)
+grep uio/jaen tmp.outgoing.$$
+echo ""
+
+echo "HG OUTGOING ROOT:"
+ORSTAT=$(grep -v uio/jaen tmp.outgoing.$$)
+grep -v uio/jaen tmp.outgoing.$$
+echo ""
+
+logon_hg status > tmp.status.$$
+MJSTAT=$(grep uio/jaen tmp.status.$$)
+grep -v '?' tmp.status.$$ > tmp.modified.$$
+CSTAT=$(grep -o -f tmp.modified.$$ tmp.incoming.$$ > tmp.confilcted.$$)
+
+if [ -n "$CSTAT" ]; then
+    echo "CONFLICT DETECTED!!! NEED TO REVERT:"
+    echo $hg_cmd revert $(echo tmp.conflicted.tmp)
+    echo ""
+fi
+
+if [ -n "$MJSTAT" -a -z "$IJSTAT" ]; then
+    echo "SAFE TO COMMIT:"
+    echo $hg_cmd commit -u eric-n@is.naist.jp -m '"'Insert commit message here.'"' $LOGONROOT/uio/jaen
+    echo ""
+fi
+
+if [ -n "$IJSTAT" -o -n "$IRSTAT" ]; then
+    echo "NEED TO PULL:"
+    echo $hg_cmd pull
+    echo ""
+fi
+
+if [ -n "$OJSTAT" -a -z "$ORSTAT" ]; then
+    echo "SAFE TO PUSH:"
+    echo $hg_cmd push
+fi
+
+rm -f tmp.*.$$
