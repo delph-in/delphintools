@@ -1,0 +1,16 @@
+#!/bin/bash
+
+WAIT_FILES="                                                
+$LOGONROOT/batch
+$LOGONROOT/dot.tsdbrc
+$LOGONROOT/lingo/logon.lisp
+$LOGONROOT/lingo/lkb/src/tsdb/lisp/mmt.lisp
+$LOGONROOT/lingo/lkb/src/tsdb/lisp/mt.lisp
+$LOGONROOT/lingo/lkb/src/tsdb/lisp/process.lisp
+$LOGONROOT/lingo/ja2en+chasen.lisp
+$LOGONROOT/lingo/ja2en.lisp
+$LOGONROOT/uio/jaen/lkb/mt.lsp"
+
+echo -n "Restoring :wait and :quantum ..."
+hg -R $LOGONROOT revert $WAIT_FILES
+echo " done."
