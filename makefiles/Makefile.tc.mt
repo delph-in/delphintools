@@ -1,29 +1,38 @@
 #!/usr/bin/make
 
 DTHOME		?= $(HOME)/delphintools
-SRC			= ja
-TGT			= en
+SRC		= ja
+TGT		= en
 TCROOT		= $(HOME)/research/data/parallel/tanaka
 TANAKA		= $(TCROOT)/tc-0906
-RESULTS		= $(TCROOT)/results
+WORK		= /work/$(USER)
+RESULTS		= $(WORK)/results
+TREEBANK	= $(WORK)/treebank/ja2en
 
 DATE		= $(shell date)
-SDATE		= $(shell date -d "$(DATE)" +"%Y%m%d")
-LDATE		= $(shell date -d "$(DATE)" +"%y-%m-%d")
+SDATE		= $(shell date +"%Y%m%d")
+LDATE		= $(shell date +"%y-%m-%d")
 
-LOGONTMP	= $(RESULTS)/$(SDATE)
+REV		= $(shell hg -R $(HOME)/logon.hg id -n)
+PID		= $(shell echo $$PPID)
+CURRENT		= $(RESULTS)/$(SDATE).$(REV).$(PID)
+LOGONLOG	= $(RESULTS)/current
+LOGONTMP	= $(WORK)/tmp
 
 SUF		= aa ab ac ad ae af ag ah ai aj
-DEV		= $(foreach n,$(shell seq -w 000 002),$(foreach s,$(SUF),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
-TEST		= $(foreach n,$(shell seq -w 003 005),$(foreach s,$(SUF),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
-TRAINA		= $(foreach n,$(shell seq -w 006 037),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
-TRAINB		= $(foreach n,$(shell seq -w 038 069),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
-TRAINC		= $(foreach n,$(shell seq -w 070 100),$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(LDATE).fan)
+DEV		= $(foreach n,$(shell seq -w 000 002),$(foreach s,$(SUF),$(LOGONLOG)/$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
+TEST		= $(foreach n,$(shell seq -w 003 005),$(foreach s,$(SUF),$(LOGONLOG)/$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
+TRAINA		= $(foreach n,$(shell seq -w 006 037),$(foreach s,$(SUF),$(LOGONLOG)/$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
+TRAINB		= $(foreach n,$(shell seq -w 038 069),$(foreach s,$(SUF),$(LOGONLOG)/$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan))
+TRAINC		= $(foreach n,$(shell seq -w 070 099),$(foreach s,$(SUF),$(LOGONLOG)/$(SRC)2$(TGT).tanaka-$(n).$(SRC)$(TGT).$(s).$(LDATE).fan)) $(LOGONLOG)/$(SRC)2$(TGT).tanaka-100.$(SRC)$(TGT).aa.$(LDATE).fan $(LOGONLOG)/$(SRC)2$(TGT).tanaka-100.$(SRC)$(TGT).ab.$(LDATE).fan $(LOGONLOG)/$(SRC)2$(TGT).tanaka-100.$(SRC)$(TGT).ac.$(LDATE).fan
 
-all:	dev test
+all:	dev test rsync
 
 kill:
-	killall -9 alisp cheap logon
+	kill_logon
+
+rsync:
+	rsync -Pauvz $(WORK)/results/* $(TCROOT)/results/ && rsync -Pauvz $(WORK)/treebank/ja2en $(HOME)/tbs/
 
 dev:	$(DEV)
 test:	$(TEST)
@@ -31,16 +40,24 @@ traina:	$(TRAINA)
 trainb:	$(TRAINB)
 trainc:	$(TRAINC)
 
-$(LOGONTMP):
+current:	$(CURRENT)
+	ln -Tsf $(CURRENT) $(RESULTS)/current
+
+$(CURRENT) $(RESULTS) $(LOGONTMP):
 	mkdir -p $@
 
-$(DEV) : $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/dev/sub/%
-	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:125 --ascii $<
+$(TREEBANK):
+	mkdir -p $@ && ln -Tsf $@ $(LOGONROOT)/lingo/lkb/src/tsdb/home/ja2en
 
-$(TEST) : $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/test/sub/%
-	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:125 --ascii $<
+$(LOGONLOG):	$(RESULTS) $(LOGONTMP) $(TREEBANK)
 
-$(TRAINA) $(TRAINB) $(TRAINC) :  $(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/train/sub/%
-	unset DISPLAY && unset LUI &&  $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 3:10:5:150 --ascii $<
+$(DEV) : $(LOGONLOG)/$(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/dev/sub/% $(LOGONLOG) $(RESULTS) $(LOGONTMP) $(TREEBANK)
+	unset DISPLAY && unset LUI && $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:5 --ascii $<
 
-.PHONY:	all kill dev test train
+$(TEST) : $(LOGONLOG)/$(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/test/sub/% $(LOGONLOG) $(RESULTS) $(LOGONTMP) $(TREEBANK)
+	unset DISPLAY && unset LUI && $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 5:5:5:5 --ascii $<
+
+$(TRAINA) $(TRAINB) $(TRAINC) :  $(LOGONLOG)/$(SRC)2$(TGT).%.$(LDATE).fan : $(TANAKA)/bitext/train/sub/% $(LOGONLOG) $(RESULTS) $(LOGONTMP) $(TREEBANK)
+	unset DISPLAY && unset LUI && $(LOGONROOT)/batch --binary --$(SRC)$(TGT) --limit 3:10:5:150 --ascii $<
+
+.PHONY:	all current rsync kill dev test train%
