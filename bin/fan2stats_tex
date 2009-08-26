@@ -1,6 +1,6 @@
 #!/bin/bash
 
-stats_tab2tex () {
+stats2tex () {
     awk '
     BEGIN {
         FS = "\t"
@@ -17,6 +17,8 @@ stats_tab2tex () {
                 generate = $7
                 total = $8
                 note = $9
+                rev = $10
+                id = $11
 
                 coverage_fmt = "%d / %d (%3.2f%%)"
                 parse_str = sprintf(coverage_fmt, parse, total, 100*parse/total)
@@ -33,4 +35,4 @@ stats_tab2tex () {
    }'
 }
 
-fan2stats_tab $* | stats_tab2tex
+fan2stats $* | stats2tex

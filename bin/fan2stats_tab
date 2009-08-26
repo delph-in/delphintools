@@ -1,37 +1,28 @@
 #!/bin/bash
 
-fan2stats_tab () {
-    grep '|=' |
-    sed 's/:0//g
-	 s/+0.0//g
-	 s/[{}<>;]//g' |
+stats2tab () {
     awk '
     BEGIN {
-                OFS = "\t"
+                FS = OFS = "\t"
     }
-    /\|=/ {
-		parse += $2
-		transfer += $6
-		generate += $11
-		total += $19
-		b = NF - 1 
-		split($b, scores, "|")
-		bleu += scores[1] * $17 
-		oracle += $NF * $17
-    }
-    END {
-                year = substr("'$1'", 1, 4)
-                month = substr("'$1'", 5, 2)
-                day = substr("'$1'", 7, 2)
+   {
+                year = substr($1, 1, 4)
+                month = substr($1, 5, 2)
+                day = substr($1, 7, 2)
                 date = sprintf("%s-%s-%s", year, month, day)
-                note = "+CHANGE"
-		bleu /= generate
-		oracle /= generate
-		precision = bleu
-		recall = generate / total
-		f = (2 * precision * recall) / (precision + recall)
-                print date, bleu, oracle, f, parse, transfer, generate, total, note
+                neva = $2
+                oracle = $3
+                f1 = $4
+                parse = $5
+                transfer = $6
+                generate = $7
+                total = $8
+                note = $9
+                rev = $10
+                id = $11
+
+                print date, neva, oracle, f1, parse, transfer, generate, total, note, rev, id
    }'
 }
 
-fan2stats_tab $* 
+fan2stats $* | stats2tab
