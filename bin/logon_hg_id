@@ -1,0 +1,12 @@
+#!/bin/bash
+
+logon_hg_id () {
+    HG=${1:-$HOME/logon.hg} && \
+    hg -R $HG qpop -a && \
+    LOGON_ID=$(hg -R $HG id -n) && \
+    PATCHES_ID=$(hg -R $HG/.hg/patches id -n) && \
+    hg -R $HG qpush -a 2>&1 && \
+    echo ${LOGON_ID}@${PATCHES_ID}
+}
+
+logon_hg_id $1 | tail -n1

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 killall -q -9 logon alisp cheap tsdb lkb yzlui pvmd3
-rm -f /tmp/*.debug.$USER
-rm -f /tmp/.tm.io.$USER*
-rm -f /tmp/.pvm.*.$USER*
+rm -f /tmp/*.debug.*$USER*
+rm -f /tmp/.*.io.*$USER*
+rm -f /tmp/.mteval.*$USER*
+rm -f /tmp/.pvm.*$USER*

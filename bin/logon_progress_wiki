@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FANDIR=`readlink -fn /work/eric-n/results/current`
+FANDIR=`readlink -fn ${1:-"/work/eric-n/results/current"}`
 FANDATE=`basename $FANDIR`
 FAN_DEV="$FANDIR/*000*.fan $FANDIR/*001*.fan $FANDIR/*002*.fan"
 FAN_TEST="$FANDIR/*003*.fan $FANDIR/*004*.fan $FANDIR/*005*.fan"
@@ -8,4 +8,4 @@ FAN_TRAIN=`ls $FANDIR/*.fan | grep -Ev '00[0-5]' 2>/dev/null`
 
 echo DEV && tail -n2 $FAN_DEV 2>/dev/null | fan2stats_wiki $FANDATE 2>/dev/null
 echo TEST && tail -n2 $FAN_TEST 2>/dev/null | fan2stats_wiki $FANDATE 2>/dev/null
-echo TRAIN && tail -n2 "$FAN_TRAIN" 2>/dev/null | fan2stats_wiki $FANDATE 2>/dev/null
+echo TRAIN && tail -n2 $FAN_TRAIN 2>/dev/null | fan2stats_wiki $FANDATE 2>/dev/null
