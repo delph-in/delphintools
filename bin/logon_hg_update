@@ -2,13 +2,14 @@
 
 logon_hg_update () {
     HG=${1:-$HOME/logon.hg}
+    (hg -R $HOME/logon.hg qpop -a
     hg clone $HOME/logon.hg $HG && \
     hg clone $HOME/logon.patches $HG/.hg/patches && \
-    hg -R $HG qpush -a || \
-    hg -R $HG qpop -a && \
-    hg -R $HG pull && hg -R $HG update && \
-    hg -R $HG/.hg/patches pull && hg -R $HG/.hg/patches update && \
-    hg -R $HG qpush -a
+    hg -R $HG qpush -a) || \
+    (hg -R $HG qpop -a && \
+    hg -R $HG pull && hg -R $HG update -C && \
+    hg -R $HG/.hg/patches pull && hg -R $HG/.hg/patches update -C && \
+    hg -R $HG qpush -a)
 }
 
 logon_hg_update $1
