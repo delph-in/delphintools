@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DTHOME=`dirname $0`
+#DTHOME=`dirname $0`
 export DTHOME
 export PATH=$DTHOME/bin:$PATH
 

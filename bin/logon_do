@@ -40,7 +40,7 @@ make_lisp () {
 }
 
 usage () {
-	echo "usage: logon_do [-a|--ascii <a.txt>] [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
+	echo "usage: logon_do [-a|--ascii <a.txt>] [-b|--bitext <b.txt>] [-c|--count] [-d|--debug] [-e|--edges <n>] [-t|--tedges <n>] [-l|--limit <n>] [-s|--settings <s.lisp>] -g|--grammar <jaen|enen> -t|--task <smrs|tmrs|pmrs|gmrs|vmrs|omrs|imrs> [<profile-top>]"
 }
 
 TREEBANK=${TREEBANK:=$HOME/treebank}
@@ -67,6 +67,10 @@ while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 		-e|--edges)
 			edges=$2
 			shift 2
+                ;;
+		-t|--tedges)
+			tedges=$2
+			shift 2
 		;;
     	-g|--grammar)
 			grammar=$2
@@ -91,12 +95,12 @@ while [ $# -gt 0 -a "${1#-}" != "$1" ]; do
 done
 
 # vars that we allow the user to define
-vars="profile_top count edges limit fmt"
+vars="profile_top count edges tedges limit fmt"
 
 # lisp loaded before initializing user-defined vars
 blisp="$DTHOME/lisp/startup.lisp $settings"
 # lisp loaded after initializing user-defined vars
-alisp="$DTHOME/lisp/$grammar/$task.lisp $DTHOME/lisp/common/$task.lisp $DTHOME/lisp/shutdown.lisp"
+alisp="$DTHOME/lisp/setvars.lisp $DTHOME/lisp/$grammar/$task.lisp $DTHOME/lisp/common/$task.lisp $DTHOME/lisp/shutdown.lisp"
 
 # make sure there is an argument left that points to an absolute path
 if [ -z "$1" ]; then
