@@ -1,0 +1,7 @@
+(setf tsdb::*tsdb-maximal-number-of-analyses* limit)
+(setf tsdb::*tsdb-maximal-number-of-results* limit)
+(set (intern "*MAXIMUM-NUMBER-OF-EDGES*" :lkb) edges)
+(set (intern "*UNPACK-EDGE-ALLOWANCE*" :lkb) edges)
+(set (intern "*TSDB-MAXIMAL-NUMBER-OF-EDGES*" :tsdb) edges)
+(setf mt::*transfer-edge-limit* tedges)
+(setf lkb::*characterize-p* t)
