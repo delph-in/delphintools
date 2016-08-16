@@ -8,14 +8,14 @@ INSTALLATION
 
 * Via git
 
-    $ git clone 'https://github.com/delph-in/delphintools.git' /path/to/delphintools
+        $ git clone 'https://github.com/delph-in/delphintools.git' /path/to/delphintools
 
 * Via zip file
 
-    $ wget 'https://github.com/delph-in/delphintools/archive/master.zip' -O /path/to/delphintools.zip
-    $ cd /path/to/
-    $ unzip delphintools.zip
-    $ mv delphintools-master delphintools
+        $ wget 'https://github.com/delph-in/delphintools/archive/master.zip' -O /path/to/delphintools.zip
+        $ cd /path/to/
+        $ unzip delphintools.zip
+        $ mv delphintools-master delphintools
 
 
 SHELL ENVIRONMENT SETUP
