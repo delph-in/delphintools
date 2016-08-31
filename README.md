@@ -1,6 +1,6 @@
 Delphin Tools: scripts for automating parsing, translation, and generation within the Delphin HPSG framework
 
-Author: Eric Nichols <ericnichols79@gmail.com> Nara Institute of Science and Technology
+Author: Eric Nichols <ericnichols79@gmail.com>, created while a graduate student at Nara Institute of Science and Technology (NAIST).
 
 
 INSTALLATION
